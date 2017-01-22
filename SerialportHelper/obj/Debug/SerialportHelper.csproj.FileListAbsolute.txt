@@ -1,0 +1,10 @@
+F:\visual studio 2013\Projects\eCardProtocol\SerialportHelper\bin\Debug\SerialportHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol\SerialportHelper\bin\Debug\SerialportHelper.pdb
+F:\visual studio 2013\Projects\eCardProtocol\SerialportHelper\obj\Debug\SerialportHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol\SerialportHelper\obj\Debug\SerialportHelper.pdb
+F:\visual studio 2013\Projects\eCardProtocol\SerialportHelper\bin\Debug\AlgorithmHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol\SerialportHelper\bin\Debug\AlgorithmHelper.pdb
+F:\visual studio 2013\Projects\eCardProtocol\SerialportHelper\bin\Debug\ICCardHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol\SerialportHelper\bin\Debug\eCardInfo.dll
+F:\visual studio 2013\Projects\eCardProtocol\SerialportHelper\bin\Debug\ICCardHelper.pdb
+F:\visual studio 2013\Projects\eCardProtocol\SerialportHelper\bin\Debug\eCardInfo.pdb

@@ -1,0 +1,12 @@
+F:\visual studio 2013\Projects\eCardProtocol\eCardInfo\bin\Debug\eCardInfo.dll
+F:\visual studio 2013\Projects\eCardProtocol\eCardInfo\bin\Debug\eCardInfo.pdb
+F:\visual studio 2013\Projects\eCardProtocol\eCardInfo\obj\Debug\eCardInfo.dll
+F:\visual studio 2013\Projects\eCardProtocol\eCardInfo\obj\Debug\eCardInfo.pdb
+F:\visual studio 2013\Projects\eCardProtocol\eCardInfo\bin\Debug\SerialportHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol\eCardInfo\bin\Debug\SerialportHelper.pdb
+E:\电享\20170120\eCardProtocol\eCardInfo\bin\Debug\eCardInfo.pdb
+E:\电享\20170120\eCardProtocol\eCardInfo\bin\Debug\SerialportHelper.dll
+E:\电享\20170120\eCardProtocol\eCardInfo\bin\Debug\SerialportHelper.pdb
+E:\电享\20170120\eCardProtocol\eCardInfo\obj\Debug\eCardInfo.csprojResolveAssemblyReference.cache
+E:\电享\20170120\eCardProtocol\eCardInfo\obj\Debug\eCardInfo.dll
+E:\电享\20170120\eCardProtocol\eCardInfo\obj\Debug\eCardInfo.pdb

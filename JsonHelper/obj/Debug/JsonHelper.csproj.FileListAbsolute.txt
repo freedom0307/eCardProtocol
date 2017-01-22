@@ -1,0 +1,7 @@
+F:\visual studio 2013\Projects\eCardProtocol\JsonHelper\bin\Debug\JsonHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol\JsonHelper\bin\Debug\JsonHelper.pdb
+F:\visual studio 2013\Projects\eCardProtocol\JsonHelper\bin\Debug\Newtonsoft.Json.dll
+F:\visual studio 2013\Projects\eCardProtocol\JsonHelper\bin\Debug\Newtonsoft.Json.xml
+F:\visual studio 2013\Projects\eCardProtocol\JsonHelper\obj\Debug\JsonHelper.csprojResolveAssemblyReference.cache
+F:\visual studio 2013\Projects\eCardProtocol\JsonHelper\obj\Debug\JsonHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol\JsonHelper\obj\Debug\JsonHelper.pdb
