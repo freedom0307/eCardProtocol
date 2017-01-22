@@ -30,8 +30,8 @@ namespace eCardInfo
         /// <summary>
         /// 金额
         /// </summary>
-        private float money;
-        public  float Money
+        private string  money;
+        public  string  Money
         {
             get { return money; }
             set { money = value; }
@@ -185,12 +185,27 @@ namespace eCardInfo
             set { balanceBeforedeductions = value; }
         }
 
+       
+    }
+    public class ParameterInfo
+    {
         private string balance;
         public string Balance
         {
             get { return balance; }
             set { balance = value; }
         }
-
+        private int debt_count;
+        public int Debt_count
+        {
+            get { return debt_count; }
+            set { debt_count = value; }
+        }
+        private byte block_NUM;
+        public byte Block_NUM
+        {
+            get { return block_NUM; }
+            set { block_NUM = value; }
+        }
     }
 }

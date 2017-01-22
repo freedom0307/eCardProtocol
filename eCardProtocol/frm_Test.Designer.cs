@@ -38,11 +38,13 @@
             this.btnVirtualTest = new System.Windows.Forms.Button();
             this.btnLoadkey = new System.Windows.Forms.Button();
             this.btnQuery_card = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // btnSetPort
             // 
-            this.btnSetPort.Location = new System.Drawing.Point(64, 363);
+            this.btnSetPort.Location = new System.Drawing.Point(64, 317);
             this.btnSetPort.Name = "btnSetPort";
             this.btnSetPort.Size = new System.Drawing.Size(93, 56);
             this.btnSetPort.TabIndex = 13;
@@ -52,7 +54,7 @@
             // 
             // btnWriteblock
             // 
-            this.btnWriteblock.Location = new System.Drawing.Point(229, 256);
+            this.btnWriteblock.Location = new System.Drawing.Point(177, 210);
             this.btnWriteblock.Name = "btnWriteblock";
             this.btnWriteblock.Size = new System.Drawing.Size(93, 56);
             this.btnWriteblock.TabIndex = 12;
@@ -61,7 +63,7 @@
             // 
             // btnReadblock
             // 
-            this.btnReadblock.Location = new System.Drawing.Point(64, 256);
+            this.btnReadblock.Location = new System.Drawing.Point(64, 210);
             this.btnReadblock.Name = "btnReadblock";
             this.btnReadblock.Size = new System.Drawing.Size(93, 56);
             this.btnReadblock.TabIndex = 11;
@@ -71,7 +73,7 @@
             // 
             // btnInitialize_card
             // 
-            this.btnInitialize_card.Location = new System.Drawing.Point(395, 256);
+            this.btnInitialize_card.Location = new System.Drawing.Point(290, 210);
             this.btnInitialize_card.Name = "btnInitialize_card";
             this.btnInitialize_card.Size = new System.Drawing.Size(93, 56);
             this.btnInitialize_card.TabIndex = 10;
@@ -81,7 +83,7 @@
             // 
             // btnDeductions_card
             // 
-            this.btnDeductions_card.Location = new System.Drawing.Point(395, 138);
+            this.btnDeductions_card.Location = new System.Drawing.Point(290, 92);
             this.btnDeductions_card.Name = "btnDeductions_card";
             this.btnDeductions_card.Size = new System.Drawing.Size(93, 56);
             this.btnDeductions_card.TabIndex = 9;
@@ -91,7 +93,7 @@
             // 
             // btnRecharge_card
             // 
-            this.btnRecharge_card.Location = new System.Drawing.Point(229, 138);
+            this.btnRecharge_card.Location = new System.Drawing.Point(177, 92);
             this.btnRecharge_card.Name = "btnRecharge_card";
             this.btnRecharge_card.Size = new System.Drawing.Size(93, 56);
             this.btnRecharge_card.TabIndex = 8;
@@ -101,7 +103,7 @@
             // 
             // btnNew_card
             // 
-            this.btnNew_card.Location = new System.Drawing.Point(64, 138);
+            this.btnNew_card.Location = new System.Drawing.Point(64, 92);
             this.btnNew_card.Name = "btnNew_card";
             this.btnNew_card.Size = new System.Drawing.Size(93, 56);
             this.btnNew_card.TabIndex = 7;
@@ -111,17 +113,18 @@
             // 
             // btnVirtualTest
             // 
-            this.btnVirtualTest.Location = new System.Drawing.Point(229, 363);
+            this.btnVirtualTest.Location = new System.Drawing.Point(64, 423);
             this.btnVirtualTest.Name = "btnVirtualTest";
             this.btnVirtualTest.Size = new System.Drawing.Size(93, 56);
             this.btnVirtualTest.TabIndex = 14;
             this.btnVirtualTest.Text = "虚拟测试";
             this.btnVirtualTest.UseVisualStyleBackColor = true;
+            this.btnVirtualTest.Visible = false;
             this.btnVirtualTest.Click += new System.EventHandler(this.btnVirtualTest_Click);
             // 
             // btnLoadkey
             // 
-            this.btnLoadkey.Location = new System.Drawing.Point(395, 363);
+            this.btnLoadkey.Location = new System.Drawing.Point(290, 317);
             this.btnLoadkey.Name = "btnLoadkey";
             this.btnLoadkey.Size = new System.Drawing.Size(93, 56);
             this.btnLoadkey.TabIndex = 15;
@@ -131,7 +134,7 @@
             // 
             // btnQuery_card
             // 
-            this.btnQuery_card.Location = new System.Drawing.Point(229, 28);
+            this.btnQuery_card.Location = new System.Drawing.Point(177, 317);
             this.btnQuery_card.Name = "btnQuery_card";
             this.btnQuery_card.Size = new System.Drawing.Size(93, 56);
             this.btnQuery_card.TabIndex = 16;
@@ -139,11 +142,31 @@
             this.btnQuery_card.UseVisualStyleBackColor = true;
             this.btnQuery_card.Click += new System.EventHandler(this.btnQuery_card_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(423, 62);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 12);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "订单信息";
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(425, 92);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.richTextBox1.Size = new System.Drawing.Size(443, 387);
+            this.richTextBox1.TabIndex = 19;
+            this.richTextBox1.Text = "";
+            // 
             // frm_Test
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(616, 502);
+            this.ClientSize = new System.Drawing.Size(880, 502);
+            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.btnQuery_card);
             this.Controls.Add(this.btnLoadkey);
             this.Controls.Add(this.btnVirtualTest);
@@ -158,6 +181,7 @@
             this.Text = "测试";
             this.Load += new System.EventHandler(this.frm_Test_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -173,5 +197,7 @@
         private System.Windows.Forms.Button btnVirtualTest;
         private System.Windows.Forms.Button btnLoadkey;
         private System.Windows.Forms.Button btnQuery_card;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }

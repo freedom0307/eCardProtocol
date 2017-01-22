@@ -50,6 +50,7 @@ namespace ICCardHelper
         ArrayList arraylist = new ArrayList();
         CardInfo Card_Info = new CardInfo();
         CardInfo card_info_read_temp = new CardInfo();
+        public  ParameterInfo parameterInfoObject = new ParameterInfo();
         private  ConsumptionRecords consumptionRecordsObject = new ConsumptionRecords();
         public List<ConsumptionRecords> consumptionRecordsList = new List<ConsumptionRecords>();
         int BaudTemp=9600;
@@ -59,6 +60,9 @@ namespace ICCardHelper
         Func<string, Int32, CardInfo> delegateReadBlock = null ;
         Func<string, float, byte , CardInfo> delegateQueryBalance =null ;
         private byte block_num_pram;
+        public byte bill_Sum=1;
+        enum CardstateEnum { Card_open=0x50,Card_locked=0x5A };
+        bool Card_statebool = false;//0x50正常卡，0x5A锁卡
         private byte[] reflection_table = new byte[32]{9,10,12,13,14,16,17,18,20,21,22,24,25,26,28,29,30,32,33,34,36,37,38,40,41,42,44,45,46,48,49,50};
 
         #region virtual test data
@@ -225,7 +229,8 @@ namespace ICCardHelper
                 recharge_card[14] = (byte)currentTime.Hour ;
                 recharge_card[15] = (byte)currentTime.Minute ;
                 recharge_card[16] = (byte)currentTime.Second ;
-                Int32 moneytemp = Convert .ToInt32 ((100 * Money).ToString ());
+                string ttt = (100 * Money).ToString("#");//不要用科学计数法
+                Int32 moneytemp = Convert .ToInt32 (ttt);
                 byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
                 Algorithmhelper.MemCopy<byte>(ref recharge_card , 17, momey_temp, 0, 4);
                 CRC = Algorithmhelper.CrcCheck(recharge_card, length-2);
@@ -263,36 +268,36 @@ namespace ICCardHelper
         {
             # region 测试用
 
-            try
-            {
-                block_num_pram = 0;
-                delegateReadBlock = ReadBlock_card;
-                if (card_info_read_temp !=null )
-                {
-                    card_info_read_temp.Card_ID = string.Empty;
-                    card_info_read_temp.Card_status = 0x5a;
-                    card_info_read_temp.Card_type = string.Empty;
-                    card_info_read_temp.Debt_count = 0;
-                    card_info_read_temp.Debt_count_max = 0;
-                    card_info_read_temp.Last_record_serial_number = 0;
-                    card_info_read_temp.Opcode = 0xFF;
-                }
-                else
-                {
-                    card_info_read_temp = new CardInfo();
-                }
-                 card_info_read_temp=delegateReadBlock .Invoke(null,8); //暂时注释掉
-                if (card_info_read_temp.Opcode == 0)
-                {
-                    Int32 balance_tempINT = Convert.ToInt32(consumptionRecordsObject.Balance);//如果后面扣款成功，则为扣款前余额，如果扣款失败，则为当前余额
-                    money_before_deductions_temp = Algorithmhelper.Int32_Bytes4(balance_tempINT);//扣款前余额
-                    Algorithmhelper.MemCopy<byte>(ref money_before_deductions_temp, 0, money_before_deductions_temp, 0, 4);
-                }
-            }
-            catch (Exception err)
-            {
+            //try
+            //{
+            //    block_num_pram = 0;
+            //    delegateReadBlock = ReadBlock_card;
+            //    if (card_info_read_temp !=null )
+            //    {
+            //        card_info_read_temp.Card_ID = string.Empty;
+            //        card_info_read_temp.Card_status = 0x5a;
+            //        card_info_read_temp.Card_type = string.Empty;
+            //        card_info_read_temp.Debt_count = 0;
+            //        card_info_read_temp.Debt_count_max = 0;
+            //        card_info_read_temp.Last_record_serial_number = 0;
+            //        card_info_read_temp.Opcode = 0xFF;
+            //    }
+            //    else
+            //    {
+            //        card_info_read_temp = new CardInfo();
+            //    }
+            //     card_info_read_temp=delegateReadBlock .Invoke(null,8); //暂时注释掉
+            //    if (card_info_read_temp.Opcode == 0)
+            //    {
+            //        //Int32 balance_tempINT = Convert.ToInt32(consumptionRecordsObject.Balance);//如果后面扣款成功，则为扣款前余额，如果扣款失败，则为当前余额
+            //        //money_before_deductions_temp = Algorithmhelper.Int32_Bytes4(balance_tempINT);//扣款前余额
+            //        Algorithmhelper.MemCopy<byte>(ref money_before_deductions_temp, 0, money_before_deductions_temp, 0, 4);
+            //    }
+            //}
+            //catch (Exception err)
+            //{
 
-            }
+            //}
             #endregion
             stopwatch.Start();
             int k = 0;
@@ -561,7 +566,7 @@ namespace ICCardHelper
             }
             while (true)
             {
-                Thread.Sleep(700);
+                Thread.Sleep(900);
                 if (k >= 10 || Card_Info.Opcode != 0xFF)
                     break;
                 k++;
@@ -634,17 +639,34 @@ namespace ICCardHelper
         /// <param name="start_block_num"></param>
         /// <param name="len"></param>
         /// <returns></returns>
-        public string  QueryConsumptionRecords()
+        public string QueryConsumptionRecords(string CardID)
         {
             int i = 0;
             consumptionRecordsList.RemoveRange(0, consumptionRecordsList.Count);
-            for (; i < 32; i++)
+            delegateReadBlock = ReadBlock_card;
+
+            #region 读参数信息，获取订单记录
+            {
+                card_info_read_temp = new CardInfo();
+                card_info_read_temp = delegateReadBlock.Invoke(null, 8); //暂时注释掉
+                if (card_info_read_temp.Opcode == 0)
+                {
+                    //bill_Sum =(byte) card_info_read_temp.Debt_count;
+                    //Algorithmhelper.MemCopy<byte>(ref money_before_deductions_temp, 0, money_before_deductions_temp, 0, 4);
+                }
+            }
+               
+            #endregion
+            
+            for (; i < bill_Sum+1 ; i++)
             {
                 CardInfo temp = ReadBlock_card(null,reflection_table [i]);
                 Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ", temp.Card_ID, temp.Message, temp.Money, temp.Opcode);
 
-            }        
-            
+            }
+            //var RecordsList = consumptionRecordsList.Where<ConsumptionRecords>(s => s.Block_NUM != 8);
+            //return JsonHelper.Jsonhelper.ObjectToJson<List<ConsumptionRecords>>(RecordsList);
+            consumptionRecordsList.RemoveRange(0, 1);
             return JsonHelper.Jsonhelper.ObjectToJson <List<ConsumptionRecords>> (consumptionRecordsList);
         }
         void serialport1_ResceiveMessage(object sender, SerialRecieveEventArgs e)
@@ -740,11 +762,15 @@ namespace ICCardHelper
                             case 0xFF:
                                 Card_Info.Opcode = 0x00;
                                 Card_Info .Card_ID =Algorithmhelper.Byte4_Int32(recBuffer,6,4 ).ToString () ;
-                                Card_Info .Money =Algorithmhelper.Byte4_Int32 (recBuffer ,12,4);
+                                consumptionRecordsObject.Card_ID = Card_Info.Card_ID;
+                                Card_Info .Money =Algorithmhelper.Byte4_Int32 (recBuffer ,12,4).ToString ("#.00");
                                // Card_Info .Card_type =几种类型？？？？
                                 Card_Info.Debt_count = recBuffer[16];
                                 Card_Info.Debt_count_max = recBuffer[17];
                                 Card_Info.Last_record_serial_number = recBuffer[18];
+                                bill_Sum = recBuffer[18];
+                                if (recBuffer[19] == 0x50)
+                                    Card_statebool = true;
                                 Card_Info.Card_status = recBuffer[19];
                                 Algorithmhelper.MemCopy<byte>(ref LastmoneyReport, 0, recBuffer, 12, 4); 
                                 break;
@@ -761,7 +787,7 @@ namespace ICCardHelper
                         {
                             case 0x00:            //正确                                                       
                                 Card_Info.Card_ID  = Algorithmhelper .Byte4_Int32 (recBuffer ,6,4).ToString ();
-                                Card_Info.Money =((float ) (Algorithmhelper.Byte4_Int32(recBuffer, 10,4)-moneyBase))/100;//此处将10误写成了15导致结果不正确(进入异常，故无法获得正确结果)，切记，20170119
+                                Card_Info.Money =(((float ) (Algorithmhelper.Byte4_Int32(recBuffer, 10,4)-moneyBase))/100).ToString ("#.00");//此处将10误写成了15导致结果不正确(进入异常，故无法获得正确结果)，切记，20170119
                                 Card_Info.Message = "操作成功";
                                 Card_Info.Opcode = 0x00;
                                 //Console.WriteLine(Card_Info.Message);
@@ -799,7 +825,7 @@ namespace ICCardHelper
                                 Card_Info.Message = "操作成功";
                                 Console.WriteLine(Card_Info.Message);
                                 Card_Info.Card_ID = Algorithmhelper.Byte4_Int32(recBuffer, 6,4).ToString ();
-                                Card_Info.Money = ((float)(Algorithmhelper.Byte4_Int32(recBuffer, 10,4) - moneyBase)) / 100;
+                                Card_Info.Money =(((float)(Algorithmhelper.Byte4_Int32(recBuffer, 10,4) - moneyBase)) / 100).ToString ("#.00");
                                 break;
                             case 0x0F:              //操作失败    
                                 Card_Info.Opcode = -1;
@@ -827,23 +853,23 @@ namespace ICCardHelper
                             case 0x00://正常扣款
                                 Card_Info.Opcode = 0x00;                                
                                 Card_Info.Card_ID  = Algorithmhelper .Byte4_Int32 (recBuffer ,6,4).ToString ();
-                                Card_Info.Money = ((float)(Algorithmhelper.Byte4_Int32(recBuffer, 10,4) - moneyBase)) / 100;
+                                Card_Info.Money = (((float)(Algorithmhelper.Byte4_Int32(recBuffer, 10,4) - moneyBase)) / 100).ToString ("#.00");
                                 Card_Info.Message = "操作成功";
                                 #region 仅做测试用
-                                //tempbill [0]=(byte)(deductions_card[10]&0x0f<<4|deductions_card[11]&0x0f);//账单，压缩BCD
-                                Algorithmhelper .MemCopy <byte>(ref tempbill ,0,deductions_card,11,6);//账单，写块时使用
-                                Algorithmhelper .MemCopy <byte>(ref deductions_money_temp ,0,deductions_card ,17,3);//扣款金额
-                                Algorithmhelper .MemCopy <byte>(ref money_bill_temp,0,deductions_card ,10,7)  ;//账单，返回结果时使用
-                                Algorithmhelper.MemCopy<byte>(ref money_current_temp, 0, recBuffer, 10, 4);//当前金额，如果扣款成功，返回当前金额
-                                //consumptionRecordsObject.DeductionsAmount = Algorithmhelper.Byte4_Int32(deductions_money_temp, 0).ToString();//写块记录——扣款金额
+
+                                //Algorithmhelper .MemCopy <byte>(ref tempbill ,0,deductions_card,11,6);//账单，写块时使用
+                                //Algorithmhelper .MemCopy <byte>(ref deductions_money_temp ,0,deductions_card ,17,3);//扣款金额
+                                //Algorithmhelper .MemCopy <byte>(ref money_bill_temp,0,deductions_card ,10,7)  ;//账单，返回结果时使用
+                                //Algorithmhelper.MemCopy<byte>(ref money_current_temp, 0, recBuffer, 10, 4);//当前金额，如果扣款成功，返回当前金额
+                               
                                 //card_info_read_temp=delegateReadBlock .Invoke(null,8);//暂时注释掉
-                                if (card_info_read_temp.Opcode ==0)
-                                {
-                                    Int32 balance_tempINT=Convert .ToInt32 ( consumptionRecordsObject.Balance);//
-                                    money_before_deductions_temp=Algorithmhelper .Int32_Bytes4 (balance_tempINT ) ;//扣款前余额
-                                    Algorithmhelper .MemCopy <byte>(ref money_before_deductions_temp ,0,money_before_deductions_temp ,0,4 );
-                                    delegateWriteBlock.BeginInvoke(null, block_num_pram+1, tempbill, deductions_money_temp, money_before_deductions_temp, 0xFF, null, null);//写块
-                                }
+                                //if (card_info_read_temp.Opcode ==0)
+                                //{
+                                //    Int32 balance_tempINT=Convert .ToInt32 ( consumptionRecordsObject.Balance);//
+                                //    money_before_deductions_temp=Algorithmhelper .Int32_Bytes4 (balance_tempINT ) ;//扣款前余额
+                                //    Algorithmhelper .MemCopy <byte>(ref money_before_deductions_temp ,0,money_before_deductions_temp ,0,4 );
+                                //    delegateWriteBlock.BeginInvoke(null, block_num_pram+1, tempbill, deductions_money_temp, money_before_deductions_temp, 0xFF, null, null);//写块
+                                //}
                                 
                                 #endregion
                                 Console.WriteLine(Card_Info.Message);
@@ -930,7 +956,7 @@ namespace ICCardHelper
                         try
                         {
                             ConsumptionRecords consumptionRecords_read_block_tempObject = new ConsumptionRecords();
-                            consumptionRecords_read_block_tempObject.Card_ID = Card_Info.Card_ID;//卡号
+                            consumptionRecords_read_block_tempObject.Card_ID = Algorithmhelper .Byte4_Int32 (recBuffer,6,4).ToString ("#");//卡号
                             consumptionRecords_read_block_tempObject.Block_NUM = recBuffer[10];//块号
                             consumptionRecords_read_block_tempObject.OpcodeType = "READ BLOCK";//操作类型
                             //delegateQueryBalance = Recharge_card ;
@@ -945,17 +971,24 @@ namespace ICCardHelper
                                     //consumptionRecordsObject.Balance =Algorithmhelper .Byte4_Int32(recBuffer ,2).ToString ();
                                     if (recBuffer [10]==8)//参数信息
                                     {
-                                        Algorithmhelper.MemCopy<byte>(ref  money_before_deductions_temp , 0, recBuffer, 2, 4);//存储扣款前余额,写记录时用
-                                        block_num_pram = recBuffer[8];
+                                        //Algorithmhelper.MemCopy<byte>(ref  money_before_deductions_temp , 0, recBuffer, 13, 4);//存储扣款前余额,写记录时用
+                                        block_num_pram = recBuffer[19];
+                                        //parameterInfoObject.Balance = Algorithmhelper.Byte4_Int32(deductions_money_temp, 0, 4).ToString();
+                                        //parameterInfoObject.Block_NUM = block_num_pram;
+                                        //parameterInfoObject.Debt_count = recBuffer[17];
+                                        bill_Sum = recBuffer[19];
                                     }
                                      StringBuilder strtemp=new StringBuilder();
                                     for (byte p=0;p<length ;p++)
                                     {
-                                        strtemp.Append( recBuffer [p+11].ToString ());
+                                        string str = recBuffer[p + 11].ToString();
+                                        if (str.Length == 1)
+                                            str = "0" + str;
+                                        strtemp.Append( str);
                                     }
                                     consumptionRecords_read_block_tempObject.Bill ="20"+strtemp ;//账单
                                     consumptionRecords_read_block_tempObject.DeductionsAmount =Algorithmhelper.Byte4_Int32 (recBuffer,17,3).ToString () ;//扣款金额
-                                    consumptionRecords_read_block_tempObject.BalanceBeforedeductions =Algorithmhelper .Byte4_Int32 (recBuffer ,20,4).ToString ();//扣款前金额
+                                    consumptionRecords_read_block_tempObject.BalanceBeforedeductions =((Algorithmhelper .Byte4_Int32 (recBuffer ,20,4)-moneyBase)/100 ).ToString ();//扣款前金额
                                     #region 查询当前余额
                                     //CardInfo  card_info_temp= delegateQueryBalance.Invoke (null ,0,0x00);
                                     //if (card_info_temp .Opcode ==0)
@@ -979,7 +1012,7 @@ namespace ICCardHelper
                                     Console.WriteLine(Card_Info.Message);
                                     break;
                             }
-                            if (consumptionRecordsObject != null)
+                            if (consumptionRecordsObject != null&&consumptionRecordsObject .Block_NUM !=8)
                                 consumptionRecordsList.Add(consumptionRecords_read_block_tempObject);
                         }
                         catch (Exception err)
@@ -1008,7 +1041,7 @@ namespace ICCardHelper
                                     Card_Info.Card_ID = Algorithmhelper.Byte4_Int32(recBuffer, 6,4).ToString();
                                     Card_Info.Message = "操作成功";
                                     consumptionRecordsObject.Message = "成功";//操作信息
-                                    consumptionRecordsObject.Balance = Algorithmhelper.Byte4_Int32(money_current_temp,0,4).ToString ();//当前金额
+                                    //consumptionRecordsObject.Balance = Algorithmhelper.Byte4_Int32(money_current_temp,0,4).ToString ();//当前金额
                                     consumptionRecordsObject.BalanceBeforedeductions = Algorithmhelper.Byte4_Int32(money_before_deductions_temp, 0,4).ToString();//扣款前金额
                                     consumptionRecordsObject .DeductionsAmount =Algorithmhelper .Byte4_Int32 (deductions_money_temp ,0,3).ToString ();//扣款金额
                                     StringBuilder strtemp=new StringBuilder();
@@ -1126,7 +1159,7 @@ namespace ICCardHelper
                 cardinfo.Last_record_serial_number = 0;
                 cardinfo.Message = string.Empty;
                 cardinfo.Mobile = string.Empty;
-                cardinfo.Money = 0;
+                cardinfo.Money = "0.00";
                 cardinfo.Opcode = 0xFF;
                 cardinfo.User_name = string.Empty;
             }
@@ -1136,7 +1169,7 @@ namespace ICCardHelper
             }
             if (consumm != null)
             {
-                consumm.Balance = string.Empty;
+                //consumm.Balance = string.Empty;
                 consumm.BalanceBeforedeductions = string.Empty;
                 consumm.Bill = string.Empty;
                 consumm.Block_NUM = 0xFF;

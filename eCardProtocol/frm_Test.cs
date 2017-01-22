@@ -12,7 +12,6 @@ using AlgorithmHelper;
 using SerialportHelper;
 using eCardInfo;
 using JsonHelper;
-//using ZRGPS_Common;
 
 namespace eCardProtocol
 {
@@ -91,8 +90,29 @@ namespace eCardProtocol
                 Console.WriteLine("准备扣款");
                 Console.WriteLine("请输入扣款金额");
                 float money = Convert.ToSingle(Console.ReadLine().Trim());
-                Global.CardinformationObject = Global.card.Deductions_card(null, money, 0x01);
-                Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode);
+                Console.WriteLine("请输入扣款标志,预扣输入 1 ，扣费输入 2：");
+                string str1= Console.ReadLine ().Trim ();
+                byte flag=0x00;
+                switch (str1)
+                {
+                    case "1":
+                        flag = 0x00;
+                        break;
+                    //case "实扣":
+                    //    flag = 0x01;
+                    //    break;
+                    case "2":
+                        flag = 0xFF;
+                        break;
+                }
+                Console.WriteLine("请输入扣款次数：");
+                string count = Console.ReadLine().Trim();
+                for (int k = 0; k < Convert.ToByte(count);k++ )
+                {
+                    Global.CardinformationObject = Global.card.Deductions_card(null, money, flag);
+                    Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode);
+                }
+              
             }
             else
             {
@@ -124,8 +144,17 @@ namespace eCardProtocol
                         //    Console.WriteLine(Jsonhelper.ObjectToJson<List<ConsumptionRecords>>(Global.card.consumptionRecordsList));
                     }
                     {
+                        Global.card.consumptionRecordsList.RemoveRange(0, Global.card.consumptionRecordsList.Count);
                         Console.WriteLine("***********************调用方法***********************");
-                        Console.WriteLine(Global.card.QueryConsumptionRecords());
+                        string result = Global.card.QueryConsumptionRecords(null );
+                        ConsumptionRecords []arraytemp= Global.card.consumptionRecordsList.ToArray();
+                        for (int j = 0; j < Global.card.consumptionRecordsList.Count;j++ )
+                        {
+                            string strr=String.Format  ("卡号：{0},订单：{1},扣款金额:{2},扣款前余额：{3}", arraytemp[j].Card_ID, arraytemp[j].Bill ,arraytemp[j].DeductionsAmount, arraytemp[j].BalanceBeforedeductions );
+                            richTextBox1.AppendText  (strr);
+                            richTextBox1.AppendText("\n");
+                        }
+                            Console.WriteLine();
                     }
                    
                     
@@ -135,10 +164,15 @@ namespace eCardProtocol
                 
                 else
                 {
-                    Console.WriteLine("请输入块号：");
+                aa:           Console.WriteLine("请输入块号：");
                     string blocknum = Console.ReadLine();
                     Global.CardinformationObject = Global.card.ReadBlock_card(null, Convert.ToInt16(blocknum));
-                    Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode);
+                    Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode);                
+                    Console.WriteLine ("参数信息——余额：{0} , 欠款次数：{1} ， 下一个存放块的序号：{2} ", Global.card.parameterInfoObject.Balance, Global.card.parameterInfoObject.Block_NUM, Global.card.parameterInfoObject.Debt_count);
+                    Console.WriteLine("结束VS继续？,结束请输入E,继续请输入C:");
+                    string str1 = Console.ReadLine().Trim();
+                    if (str1 == "C")
+                        goto aa;
                     Console.WriteLine(Jsonhelper.ObjectToJson<List<ConsumptionRecords>>(Global.card.consumptionRecordsList));
                 }
                
