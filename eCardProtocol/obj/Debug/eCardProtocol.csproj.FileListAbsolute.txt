@@ -42,3 +42,6 @@ E:\电享\20170120\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.Propertie
 E:\电享\20170120\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.csproj.GenerateResource.Cache
 E:\电享\20170120\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.exe
 E:\电享\20170120\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.pdb
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\Debug\eCardProtocol.exe.config
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.exe
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.pdb
