@@ -52,7 +52,7 @@ namespace eCardProtocol
                 string Akey = "FFFFFFFFFFFF";
                 string Bkey = "FFFFFFFFFFFF";
                 Global .CardinformationObject = Global.card.New_card(null , money , null, Akey , Bkey );
-                Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ,欠款次数： {4} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count );
+                Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ,欠款次数： {4},卡状态：{5} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count, Global.CardinformationObject .Card_status );
             }
             else
             {
@@ -72,7 +72,7 @@ namespace eCardProtocol
                 Console.WriteLine("请输入充值金额");
                 float money = Convert.ToSingle(Console.ReadLine().Trim());
                 Global.CardinformationObject = Global.card.Recharge_card(null, money, 0x01);
-                Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3},欠款次数： {4} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count);
+                Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3},欠款次数： {4},卡状态： {5} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count, Global.CardinformationObject.Card_status);
             }
             else
             {
@@ -110,7 +110,7 @@ namespace eCardProtocol
                 for (int k = 0; k < Convert.ToByte(count);k++ )
                 {
                     Global.CardinformationObject = Global.card.Deductions_card(null, money, flag);
-                    Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3},欠款次数： {4} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count);
+                    Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3},欠款次数： {4}，卡状态：{5} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count, Global.CardinformationObject.Card_status);
                 }
               
             }

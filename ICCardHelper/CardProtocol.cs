@@ -139,11 +139,13 @@ namespace ICCardHelper
             if (Available_tags==0x50)
             {
                Card_Info .Message ="已开卡，请勿重复开卡！";
+               Card_Info.Opcode = -3;
                 return Card_Info ;
             }
             if (Available_tags ==0x5A)
             {
                 Card_Info .Message ="卡已锁住，不能开卡！";
+                Card_Info.Opcode = -3;
                 return Card_Info ;
             }
             stopwatch.Start();
@@ -166,7 +168,7 @@ namespace ICCardHelper
                     byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
                     Algorithmhelper.MemCopy<byte>(ref  new_card, 6, btid, 0, 4);
                 }
-                Int32 moneytemp = Convert.ToInt32((100 * Money).ToString());
+                Int32 moneytemp = Convert.ToInt32((100 * Money).ToString("#"));
                 byte[] btmoney = Algorithmhelper.Int32_Bytes4(moneytemp + moneyBase);
                 Algorithmhelper.MemCopy<byte>(ref  new_card, 10, btmoney,0, 4);
                 if (StringVerdict(key_read) && StringVerdict(key_write))
@@ -216,6 +218,7 @@ namespace ICCardHelper
             if (Available_tags != 0x50)
             {
                 Card_Info.Message = "卡异常，请联系管理员！";
+                Card_Info.Opcode = -3;
                 return Card_Info;
             }
             stopwatch.Start();
@@ -320,6 +323,7 @@ namespace ICCardHelper
             if (Available_tags != 0x50)
             {
                 Card_Info.Message = "卡异常，请联系管理员！";
+                Card_Info.Opcode = -3;
                 return Card_Info;
             }
             int k = 0;
@@ -349,7 +353,7 @@ namespace ICCardHelper
                 deductions_card[14] = (byte)currentTime.Hour;
                 deductions_card[15] = (byte)currentTime.Minute;
                 deductions_card[16] = (byte)currentTime.Second;
-                Int32 moneytemp = Convert.ToInt32((100 * Money).ToString());
+                Int32 moneytemp = Convert.ToInt32((100 * Money).ToString("#"));
                 byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
                 Algorithmhelper.MemCopy<byte>(ref deductions_card, 17, momey_temp, 1, 3);
                 CRC = Algorithmhelper.CrcCheck(deductions_card, length-2);
@@ -387,6 +391,7 @@ namespace ICCardHelper
             if (Available_tags != 0x50)
             {
                 Card_Info.Message = "卡异常，请联系管理员！";
+                Card_Info.Opcode = -3;
                 return Card_Info;
             }
             CardInitialization(ref Card_Info, ref consumptionRecordsObject);
@@ -412,7 +417,8 @@ namespace ICCardHelper
                 query_card[14] = (byte)currentTime.Hour;
                 query_card[15] = (byte)currentTime.Minute;
                 query_card[16] = (byte)currentTime.Second;
-                Int32 moneytemp = Convert.ToInt32((100 * Money).ToString());
+                string strtem = (100 * Money).ToString("");
+                Int32 moneytemp = Convert.ToInt32(strtem);
                 byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
                 Algorithmhelper.MemCopy<byte>(ref query_card, 17, momey_temp, 0, 4);
                 CRC = Algorithmhelper.CrcCheck(query_card, length - 2);
@@ -451,11 +457,13 @@ namespace ICCardHelper
             if (Available_tags == 0x5A)
             {
                 Card_Info.Message = "卡异常，不能销卡，请联系管理员！";
+                Card_Info.Opcode = -3;
                 return Card_Info;
             }
             if (!Bill_clear)
             {
                 Card_Info.Message = "还有未支付订单，请联系管理员！";
+                Card_Info.Opcode = -3;
                 return Card_Info;
             }
             stopwatch.Start();
@@ -577,6 +585,7 @@ namespace ICCardHelper
             if (Available_tags != 0x50)
             {
                 Card_Info.Message = "卡异常，请联系管理员！";
+                Card_Info.Opcode = -3;
                 return Card_Info;
             }
             int k = 0;
@@ -635,6 +644,7 @@ namespace ICCardHelper
             if (Available_tags != 0x50)
             {
                 Card_Info.Message = "卡异常，请联系管理员！";
+                Card_Info.Opcode = -3;
                 return Card_Info;
             }
             int k = 0;
@@ -695,6 +705,7 @@ namespace ICCardHelper
             if (Available_tags != 0x50)
             {
                 Card_Info.Message = "卡异常，请联系管理员！";
+                Card_Info.Opcode = -3;
                 return JsonHelper.Jsonhelper.ObjectToJson<List<ConsumptionRecords>>(consumptionRecordsList);
             }
             int i = 0;
@@ -811,11 +822,10 @@ namespace ICCardHelper
                 if (CRCH == recBuffer[len - 2] && CRCL == recBuffer[len - 1])
                 {
                     if (FunCode == 0x1A)//读卡-主动上报
-                    {
-                        Algorithmhelper .WriteLOG_Console(recBuffer, "读卡（接收数据）");
+                    {                       
                         switch (state)
                         {
-                            case 0xFF:
+                            case 0x00:
                                 Card_Info.Opcode = 0x00;
                                 Card_Info .Card_ID =Algorithmhelper.Byte4_Int64(recBuffer,6,4 ).ToString () ;
                                 consumptionRecordsObject.Card_ID = Card_Info.Card_ID;
@@ -824,20 +834,25 @@ namespace ICCardHelper
                                 Card_Info.Debt_count = recBuffer[16];
                                 Card_Info.Debt_count_max = recBuffer[17];
                                 Card_Info.Last_record_serial_number = recBuffer[18];
+                                Card_Info.Message = "卡正常";
                                 bill_Sum = recBuffer[18];
                                 Available_tags = recBuffer[19];
-                                Card_Info.Card_status = recBuffer[19];
+                                Card_Info.Card_status = recBuffer[19];//卡状态
                                 if (recBuffer[19] == 0x50)
                                     Card_statebool = true;
                                 if ((recBuffer[20] & 0xff) != 0 || (recBuffer[21] & 0xff) != 0 || (recBuffer[22] & 0xff) != 0 || (recBuffer[23] & 0xff) != 0)
                                     Bill_clear = false;
-                                Card_Info.Card_status = recBuffer[19];
+          
                                 Algorithmhelper.MemCopy<byte>(ref LastmoneyReport, 0, recBuffer, 12, 4); 
+                                break;
+                            case 0x0f:
+                                Card_Info.Message = "卡异常";
+                                Card_Info.Opcode = -3;
                                 break;
                             default :
                                 break;
                         }
-
+                        Algorithmhelper.WriteLOG_Console(recBuffer, "读卡（接收数据）");
 
                     }
                     if (FunCode == 0x2C)//开卡
@@ -1048,7 +1063,7 @@ namespace ICCardHelper
                                     }
                                     consumptionRecords_read_block_tempObject.Bill ="20"+strtemp ;//账单
                                     consumptionRecords_read_block_tempObject.DeductionsAmount =Algorithmhelper.Byte4_Int64 (recBuffer,17,3).ToString () ;//扣款金额
-                                    consumptionRecords_read_block_tempObject.BalanceBeforedeductions =((Algorithmhelper .Byte4_Int64 (recBuffer ,20,4)-moneyBase)/100 ).ToString ();//扣款前金额
+                                    consumptionRecords_read_block_tempObject.BalanceBeforedeductions =((Algorithmhelper .Byte4_Int64 (recBuffer ,20,4)-moneyBase)/100 ).ToString ("#.00");//扣款前金额
                                     #region 查询当前余额
                                     //CardInfo  card_info_temp= delegateQueryBalance.Invoke (null ,0,0x00);
                                     //if (card_info_temp .Opcode ==0)
@@ -1102,12 +1117,12 @@ namespace ICCardHelper
                                     Card_Info.Message = "操作成功";
                                     consumptionRecordsObject.Message = "成功";//操作信息
                                     //consumptionRecordsObject.Balance = Algorithmhelper.Byte4_Int32(money_current_temp,0,4).ToString ();//当前金额
-                                    consumptionRecordsObject.BalanceBeforedeductions = Algorithmhelper.Byte4_Int64(money_before_deductions_temp, 0,4).ToString();//扣款前金额
-                                    consumptionRecordsObject .DeductionsAmount =Algorithmhelper .Byte4_Int64 (deductions_money_temp ,0,3).ToString ();//扣款金额
+                                    consumptionRecordsObject.BalanceBeforedeductions = Algorithmhelper.Byte4_Int64(money_before_deductions_temp, 0,4).ToString("#.00");//扣款前金额
+                                    consumptionRecordsObject .DeductionsAmount =Algorithmhelper .Byte4_Int64 (deductions_money_temp ,0,3).ToString ("#.00");//扣款金额
                                     StringBuilder strtemp=new StringBuilder();
                                     for (int p=0;p<money_bill_temp .Length ;p++)
                                     {
-                                        strtemp.Append( money_bill_temp [p].ToString ());
+                                        strtemp.Append( money_bill_temp [p].ToString ("#"));
                                     }
                                     consumptionRecordsObject.Bill = strtemp.ToString ();
                                     Console.WriteLine(Card_Info.Message);
