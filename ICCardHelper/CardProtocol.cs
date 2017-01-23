@@ -63,6 +63,8 @@ namespace ICCardHelper
         public byte bill_Sum=1;
         enum CardstateEnum { Card_open=0x50,Card_locked=0x5A };
         bool Card_statebool = false;//0x50正常卡，0x5A锁卡
+        bool Bill_clear=true  ;
+        byte Available_tags;
         private byte[] reflection_table = new byte[32]{9,10,12,13,14,16,17,18,20,21,22,24,25,26,28,29,30,32,33,34,36,37,38,40,41,42,44,45,46,48,49,50};
 
         #region virtual test data
@@ -134,6 +136,16 @@ namespace ICCardHelper
         /// <returns></returns>
         public CardInfo New_card(string CardID,float Money,string mode,string key_read,string key_write)//开卡
         {
+            if (Available_tags==0x50)
+            {
+               Card_Info .Message ="已开卡，请勿重复开卡！";
+                return Card_Info ;
+            }
+            if (Available_tags ==0x5A)
+            {
+                Card_Info .Message ="卡已锁住，不能开卡！";
+                return Card_Info ;
+            }
             stopwatch.Start();
             int k = 0;
             const byte length=30;
@@ -201,6 +213,11 @@ namespace ICCardHelper
         /// <returns></returns>
         public CardInfo Recharge_card(string CardID, float  Money,byte recharge_flag=0x01)//充值
         {
+            if (Available_tags != 0x50)
+            {
+                Card_Info.Message = "卡异常，请联系管理员！";
+                return Card_Info;
+            }
             stopwatch.Start();
             int k = 0;
             const byte length = 23;
@@ -300,6 +317,11 @@ namespace ICCardHelper
             //}
             #endregion
             stopwatch.Start();
+            if (Available_tags != 0x50)
+            {
+                Card_Info.Message = "卡异常，请联系管理员！";
+                return Card_Info;
+            }
             int k = 0;
             const byte length = 22;
             const byte command_flag = 0x3C;
@@ -362,6 +384,11 @@ namespace ICCardHelper
             const byte length = 23;
             const byte command_flag = 0x51;
             ushort CRC;
+            if (Available_tags != 0x50)
+            {
+                Card_Info.Message = "卡异常，请联系管理员！";
+                return Card_Info;
+            }
             CardInitialization(ref Card_Info, ref consumptionRecordsObject);
             try
             {
@@ -419,10 +446,24 @@ namespace ICCardHelper
         /// <param name="CardID"></param>
         /// <param name="SUM"></param>
         /// <returns></returns>
-        public CardInfo Initialize_card(string CardID, float Money)//销卡
+        public CardInfo Initialize_card(string CardID)//销卡
         {
-
+            if (Available_tags == 0x5A)
+            {
+                Card_Info.Message = "卡异常，不能销卡，请联系管理员！";
+                return Card_Info;
+            }
+            if (!Bill_clear)
+            {
+                Card_Info.Message = "还有未支付订单，请联系管理员！";
+                return Card_Info;
+            }
             stopwatch.Start();
+            if (Available_tags != 0x50)
+            {
+                Card_Info.Message = "卡异常，请联系管理员！";
+                return Card_Info;
+            }
             int k = 0;
             const byte length = 12;
             const byte command_flag = 0x38;
@@ -533,6 +574,11 @@ namespace ICCardHelper
         public CardInfo ReadBlock_card (string CardID, Int32 block_num)
         {
             stopwatch.Start();
+            if (Available_tags != 0x50)
+            {
+                Card_Info.Message = "卡异常，请联系管理员！";
+                return Card_Info;
+            }
             int k = 0;
             const byte length = 13;
             const byte command_flag = 0x5C;
@@ -586,6 +632,11 @@ namespace ICCardHelper
         public CardInfo WriteBlock_card(string CardID, Int32 block_num,byte []bill,byte []moneyop,byte []lastmoney,byte flag=0xFF)
         {
             stopwatch.Start();
+            if (Available_tags != 0x50)
+            {
+                Card_Info.Message = "卡异常，请联系管理员！";
+                return Card_Info;
+            }
             int k = 0;
             const byte length = 29;
             const byte command_flag = 0x3D;
@@ -641,6 +692,11 @@ namespace ICCardHelper
         /// <returns></returns>
         public string QueryConsumptionRecords(string CardID)
         {
+            if (Available_tags != 0x50)
+            {
+                Card_Info.Message = "卡异常，请联系管理员！";
+                return JsonHelper.Jsonhelper.ObjectToJson<List<ConsumptionRecords>>(consumptionRecordsList);
+            }
             int i = 0;
             consumptionRecordsList.RemoveRange(0, consumptionRecordsList.Count);
             delegateReadBlock = ReadBlock_card;
@@ -769,8 +825,12 @@ namespace ICCardHelper
                                 Card_Info.Debt_count_max = recBuffer[17];
                                 Card_Info.Last_record_serial_number = recBuffer[18];
                                 bill_Sum = recBuffer[18];
+                                Available_tags = recBuffer[19];
+                                Card_Info.Card_status = recBuffer[19];
                                 if (recBuffer[19] == 0x50)
                                     Card_statebool = true;
+                                if ((recBuffer[20] & 0xff) != 0 || (recBuffer[21] & 0xff) != 0 || (recBuffer[22] & 0xff) != 0 || (recBuffer[23] & 0xff) != 0)
+                                    Bill_clear = false;
                                 Card_Info.Card_status = recBuffer[19];
                                 Algorithmhelper.MemCopy<byte>(ref LastmoneyReport, 0, recBuffer, 12, 4); 
                                 break;
@@ -802,13 +862,13 @@ namespace ICCardHelper
                                 break;
                             case 0x0F:             //操作失败
                                 Jine = 0xFE;
-                                Card_Info.Opcode  = -2;
+                                Card_Info.Opcode  = -3;
                                 Card_Info.Message = "操作失败";
                                // Console.WriteLine(Card_Info.Message);
                                 break;
                             case 0x0E:             //校验错误
                                 Jine = 0xFB;
-                                Card_Info.Opcode  = -2;
+                                Card_Info.Opcode  = -4;
                                 Card_Info.Message = "校验错误";
                                // Console.WriteLine(Card_Info.Message);
                                 break;
@@ -828,12 +888,12 @@ namespace ICCardHelper
                                 Card_Info.Money =(((float)(Algorithmhelper.Byte4_Int64(recBuffer, 10,4) - moneyBase)) / 100).ToString ("#.00");
                                 break;
                             case 0x0F:              //操作失败    
-                                Card_Info.Opcode = -1;
+                                Card_Info.Opcode = -3;
                                 Card_Info.Message = "操作失败";
                                 Console.WriteLine(Card_Info.Message);
                                 break;
                             case 0x0E:              //校验错误
-                                Card_Info.Opcode  = -2;
+                                Card_Info.Opcode  = -4;
                                 Card_Info.Message = "校验错误";
                                 Console.WriteLine(Card_Info.Message);
                                 break;
@@ -875,22 +935,22 @@ namespace ICCardHelper
                                 Console.WriteLine(Card_Info.Message);
                                 break;
                             case 0x01://已扣款
-                                Card_Info.Opcode = 0x00;
+                                Card_Info.Opcode = -1;
                                 Card_Info.Message = "已扣款";
                                 Console.WriteLine(Card_Info.Message);
                                 break;
                             case 0x02: //余额不足
-                                Card_Info.Opcode = -3;
+                                Card_Info.Opcode = -2;
                                 Card_Info.Message = "余额不足";
                                 Console.WriteLine(Card_Info.Message);
                                 break;
                             case 0x0f://操作失败       
-                                Card_Info.Opcode = -2;
+                                Card_Info.Opcode = -3;
                                 Card_Info.Message = "操作失败";
                                 Console.WriteLine(Card_Info.Message);
                                 break;
                             case 0x0E://校验错误
-                                Card_Info.Opcode = -2;
+                                Card_Info.Opcode = -4;
                                 Card_Info.Message = "校验错误";
                                 Console.WriteLine(Card_Info.Message);
                                 break;
@@ -914,13 +974,13 @@ namespace ICCardHelper
                                 break;
                             case 0x0F:                   //操作失败
                                 Jine = 0xFE;
-                                Card_Info.Opcode = -2;
+                                Card_Info.Opcode = -3;
                                 Card_Info.Message = "操作失败";
                                 Console.WriteLine(Card_Info.Message);
                                 break;
                             case 0x0E:                  //校验错误
                                 Jine = 0xFB;
-                                Card_Info.Opcode = -2;
+                                Card_Info.Opcode = -4;
                                 Card_Info.Message = "校验错误";
                                 Console.WriteLine(Card_Info.Message);
                                 break;
@@ -938,12 +998,12 @@ namespace ICCardHelper
                                 Console.WriteLine(Card_Info.Message);
                                 break;
                             case 0x0F:
-                                Card_Info.Opcode = -2;
+                                Card_Info.Opcode = -3;
                                 Card_Info.Message = "操作失败";
                                 Console.WriteLine(Card_Info.Message);
                                 break;
                             case 0x0E:
-                                Card_Info.Opcode = -2;
+                                Card_Info.Opcode = -4;
                                 Card_Info.Message = "CRC错误";
                                 Console.WriteLine(Card_Info.Message);
                                 break;
@@ -1000,13 +1060,13 @@ namespace ICCardHelper
                                     Console.WriteLine(Card_Info.Message);
                                     break;
                                 case 0x0F:
-                                    Card_Info.Opcode = -2;
+                                    Card_Info.Opcode = -3;
                                     Card_Info.Message = "操作失败";
                                     consumptionRecords_read_block_tempObject.Message ="失败";
                                     Console.WriteLine(Card_Info.Message);
                                     break;
                                 case 0x0E:
-                                    Card_Info.Opcode = -2;
+                                    Card_Info.Opcode = -4;
                                     Card_Info.Message = "CRC错误";
                                     consumptionRecords_read_block_tempObject.Message ="失败";
                                     Console.WriteLine(Card_Info.Message);
@@ -1053,13 +1113,13 @@ namespace ICCardHelper
                                     Console.WriteLine(Card_Info.Message);
                                     break;
                                 case 0x0F:
-                                    Card_Info.Opcode = -2;
+                                    Card_Info.Opcode = -3;
                                     Card_Info.Message = "操作失败";
                                     consumptionRecordsObject.Message = "失败";//操作信息
                                     Console.WriteLine(Card_Info.Message);
                                     break;
                                 case 0x0E:
-                                    Card_Info.Opcode = -2;
+                                    Card_Info.Opcode = -4;
                                     Card_Info.Message = "CRC错误";
                                     consumptionRecordsObject.Message = "失败";//操作信息
                                     Console.WriteLine(Card_Info.Message);

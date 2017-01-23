@@ -44,7 +44,7 @@
             // 
             // btnSetPort
             // 
-            this.btnSetPort.Location = new System.Drawing.Point(64, 317);
+            this.btnSetPort.Location = new System.Drawing.Point(64, 315);
             this.btnSetPort.Name = "btnSetPort";
             this.btnSetPort.Size = new System.Drawing.Size(93, 56);
             this.btnSetPort.TabIndex = 13;
@@ -54,7 +54,7 @@
             // 
             // btnWriteblock
             // 
-            this.btnWriteblock.Location = new System.Drawing.Point(177, 210);
+            this.btnWriteblock.Location = new System.Drawing.Point(177, 208);
             this.btnWriteblock.Name = "btnWriteblock";
             this.btnWriteblock.Size = new System.Drawing.Size(93, 56);
             this.btnWriteblock.TabIndex = 12;
@@ -63,7 +63,7 @@
             // 
             // btnReadblock
             // 
-            this.btnReadblock.Location = new System.Drawing.Point(64, 210);
+            this.btnReadblock.Location = new System.Drawing.Point(64, 208);
             this.btnReadblock.Name = "btnReadblock";
             this.btnReadblock.Size = new System.Drawing.Size(93, 56);
             this.btnReadblock.TabIndex = 11;
@@ -73,7 +73,7 @@
             // 
             // btnInitialize_card
             // 
-            this.btnInitialize_card.Location = new System.Drawing.Point(290, 210);
+            this.btnInitialize_card.Location = new System.Drawing.Point(290, 208);
             this.btnInitialize_card.Name = "btnInitialize_card";
             this.btnInitialize_card.Size = new System.Drawing.Size(93, 56);
             this.btnInitialize_card.TabIndex = 10;
@@ -124,7 +124,7 @@
             // 
             // btnLoadkey
             // 
-            this.btnLoadkey.Location = new System.Drawing.Point(290, 317);
+            this.btnLoadkey.Location = new System.Drawing.Point(290, 315);
             this.btnLoadkey.Name = "btnLoadkey";
             this.btnLoadkey.Size = new System.Drawing.Size(93, 56);
             this.btnLoadkey.TabIndex = 15;
@@ -134,7 +134,7 @@
             // 
             // btnQuery_card
             // 
-            this.btnQuery_card.Location = new System.Drawing.Point(177, 317);
+            this.btnQuery_card.Location = new System.Drawing.Point(177, 315);
             this.btnQuery_card.Name = "btnQuery_card";
             this.btnQuery_card.Size = new System.Drawing.Size(93, 56);
             this.btnQuery_card.TabIndex = 16;
