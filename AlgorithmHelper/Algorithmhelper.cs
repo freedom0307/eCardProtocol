@@ -137,7 +137,7 @@ namespace AlgorithmHelper
              }
              return b;
          }
-         public static  Int32 Byte4_Int32(byte[] array, int StartIndex,int len)
+         public static  Int64 Byte4_Int64(byte[] array, int StartIndex,int len)//注意数据溢出
          {
              string str = null;
              for (int t = 0; t < len ; t++)
@@ -150,7 +150,8 @@ namespace AlgorithmHelper
                  // Console.WriteLine(str1);
              }
              Int32 result = Int32.Parse(str, System.Globalization.NumberStyles.HexNumber);
-             return result;
+             Int64 result1 = Int64.Parse(str, System.Globalization.NumberStyles.HexNumber);
+             return result1;
          }
          public static void  StringArray_ByteArray(char[] str, out byte[] bytegoal)
          {

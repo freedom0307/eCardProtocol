@@ -154,7 +154,7 @@ namespace eCardProtocol
                             richTextBox1.AppendText  (strr);
                             richTextBox1.AppendText("\n");
                         }
-                            Console.WriteLine();
+                        Console.WriteLine("共{0}条记录", Global.card.consumptionRecordsList.Count);
                     }
                    
                     
@@ -220,8 +220,8 @@ namespace eCardProtocol
                 //string Akey = Console.ReadLine().Trim();
                 //Console.WriteLine("请输入写秘钥B");
                 //string Bkey = Console.ReadLine().Trim();
-                string Akey = "FFFFFFFFFFFF";
-                string Bkey = "FFFFFFFFFFFF";
+                string Akey = "112233445566";
+                string Bkey = "112233445566";
                 Global.CardinformationObject = Global.card.Load_Key_card(Akey, Bkey);
                 Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode);
             }

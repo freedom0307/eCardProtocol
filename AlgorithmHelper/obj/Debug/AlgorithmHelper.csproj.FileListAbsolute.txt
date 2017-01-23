@@ -7,3 +7,8 @@ E:\电享\20170120\eCardProtocol\AlgorithmHelper\bin\Debug\AlgorithmHelper.pdb
 E:\电享\20170120\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.dll
 E:\电享\20170120\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.pdb
 E:\电享\20170120\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.csprojResolveAssemblyReference.cache
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\bin\Debug\AlgorithmHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\bin\Debug\AlgorithmHelper.pdb
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.csprojResolveAssemblyReference.cache
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.pdb
