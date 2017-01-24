@@ -225,6 +225,7 @@ namespace ICCardHelper
             int k = 0;
             const byte length = 23;
             const byte command_flag = 0x51;
+            Int32 moneytemp;
             ushort CRC;
             CardInitialization(ref Card_Info, ref consumptionRecordsObject);
             try
@@ -250,7 +251,10 @@ namespace ICCardHelper
                 recharge_card[15] = (byte)currentTime.Minute ;
                 recharge_card[16] = (byte)currentTime.Second ;
                 string ttt = (100 * Money).ToString("#");//不要用科学计数法
-                Int32 moneytemp = Convert .ToInt32 (ttt);
+                if (ttt == "")
+                    moneytemp = 0;
+                else 
+                   moneytemp = Convert .ToInt32 (ttt);
                 byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
                 Algorithmhelper.MemCopy<byte>(ref recharge_card , 17, momey_temp, 0, 4);
                 CRC = Algorithmhelper.CrcCheck(recharge_card, length-2);
@@ -330,6 +334,7 @@ namespace ICCardHelper
             const byte length = 22;
             const byte command_flag = 0x3C;
             ushort CRC;
+            Int32 moneytemp;
             CardInitialization(ref Card_Info, ref consumptionRecordsObject);
             try
             {
@@ -353,7 +358,11 @@ namespace ICCardHelper
                 deductions_card[14] = (byte)currentTime.Hour;
                 deductions_card[15] = (byte)currentTime.Minute;
                 deductions_card[16] = (byte)currentTime.Second;
-                Int32 moneytemp = Convert.ToInt32((100 * Money).ToString("#"));
+                string ttt = (100 * Money).ToString("#");//不要用科学计数法
+                if (ttt == "")
+                    moneytemp = 0;
+                else
+                    moneytemp = Convert.ToInt32(ttt);
                 byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
                 Algorithmhelper.MemCopy<byte>(ref deductions_card, 17, momey_temp, 1, 3);
                 CRC = Algorithmhelper.CrcCheck(deductions_card, length-2);
