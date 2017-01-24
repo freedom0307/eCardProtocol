@@ -16,3 +16,11 @@ F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debu
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\obj\Debug\eCardInfo.csprojResolveAssemblyReference.cache
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\obj\Debug\eCardInfo.dll
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\obj\Debug\eCardInfo.pdb
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\ICCardHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\AlgorithmHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\JsonHelper.dll
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\Newtonsoft.Json.dll
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\ICCardHelper.pdb
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\AlgorithmHelper.pdb
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\JsonHelper.pdb
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\Newtonsoft.Json.xml

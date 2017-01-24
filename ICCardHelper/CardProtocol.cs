@@ -61,10 +61,11 @@ namespace ICCardHelper
         Func<string, float, byte , CardInfo> delegateQueryBalance =null ;
         private byte block_num_pram;
         public byte bill_Sum=1;
-        enum CardstateEnum { Card_open=0x50,Card_locked=0x5A };
-        bool Card_statebool = false;//0x50正常卡，0x5A锁卡
+        enum CardstateEnum { Card_normal=0x50,Card_locked=0x5A,Card_unopend=0x00 };
+        bool Card_statebool = false;//0x50正常卡，0x5A锁卡;0x00:未开卡；其他：未知卡
+        byte Card_Available_tags;//卡可用状态标记
         bool Bill_clear=true  ;
-        byte Available_tags;
+        bool continue_ornot = false;
         private byte[] reflection_table = new byte[32]{9,10,12,13,14,16,17,18,20,21,22,24,25,26,28,29,30,32,33,34,36,37,38,40,41,42,44,45,46,48,49,50};
 
         #region virtual test data
@@ -136,58 +137,67 @@ namespace ICCardHelper
         /// <returns></returns>
         public CardInfo New_card(string CardID,float Money,string mode,string key_read,string key_write)//开卡
         {
-            if (Available_tags==0x50)
-            {
-               Card_Info .Message ="已开卡，请勿重复开卡！";
-               Card_Info.Opcode = -3;
-                return Card_Info ;
-            }
-            if (Available_tags ==0x5A)
-            {
-                Card_Info .Message ="卡已锁住，不能开卡！";
-                Card_Info.Opcode = -3;
-                return Card_Info ;
-            }
+           
             stopwatch.Start();
             int k = 0;
             const byte length=30;
             const byte command_flag=0x2C;
             byte[] key_temp = new byte[6];
             CardInitialization(ref Card_Info, ref consumptionRecordsObject);
+           
             ushort CRC;
             try
             {
-                Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
-                Algorithmhelper.MemCopy<byte>(ref  new_card, 0, frameHead_byte, 0, 3);
-                new_card[3] = length ;
-                new_card[4] = command_flag ;
-                new_card[5] = Convert.ToByte(mode);
-                if (CardID !=null )
+                //delegateReadBlock = ReadBlock_card;
+                //delegateReadBlock(null, 8);
+                if (continue_ornot )
                 {
-                    Int32 cardid = Convert.ToInt32(CardID);
-                    byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
-                    Algorithmhelper.MemCopy<byte>(ref  new_card, 6, btid, 0, 4);
+                    if (Card_Available_tags == 0x50)
+                    {
+                        Card_Info.Message = "已开卡，请勿重复开卡！";
+                        Card_Info.Opcode = -3;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x5A)
+                    {
+                        Card_Info.Message = "卡已锁住，不能开卡！";
+                        Card_Info.Opcode = -3;
+                        return Card_Info;
+                    }
+
+                    Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
+                    Algorithmhelper.MemCopy<byte>(ref  new_card, 0, frameHead_byte, 0, 3);
+                    new_card[3] = length;
+                    new_card[4] = command_flag;
+                    new_card[5] = Convert.ToByte(mode);
+                    if (CardID != null)
+                    {
+                        Int32 cardid = Convert.ToInt32(CardID);
+                        byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                        Algorithmhelper.MemCopy<byte>(ref  new_card, 6, btid, 0, 4);
+                    }
+                    Int32 moneytemp = Convert.ToInt32((100 * Money).ToString("#"));
+                    byte[] btmoney = Algorithmhelper.Int32_Bytes4(moneytemp + moneyBase);
+                    Algorithmhelper.MemCopy<byte>(ref  new_card, 10, btmoney, 0, 4);
+                    if (StringVerdict(key_read) && StringVerdict(key_write))
+                    {
+                        key_temp = Algorithmhelper.Key_string_byte(key_read);
+                        Algorithmhelper.MemCopy<byte>(ref  new_card, 14, key_temp, 0, 6);
+                        key_temp = Algorithmhelper.Key_string_byte(key_write);
+                        Algorithmhelper.MemCopy<byte>(ref  new_card, 20, key_temp, 0, 6);
+                    }
+                    else
+                    {
+                        Card_Info.Message = "密码格式错误！";
+                        Console.WriteLine("密码格式错误");
+                    }
+                    CRC = Algorithmhelper.CrcCheck(new_card, length - 2);
+                    new_card[length - 2] = (byte)(CRC >> 8);
+                    new_card[length - 1] = (byte)(CRC & 0x00ff);
+                    SerialportObject.WriteByteToSerialPort(new_card, length);
+                    Algorithmhelper.WriteLOG_Console(new_card, "开卡(发送)");
                 }
-                Int32 moneytemp = Convert.ToInt32((100 * Money).ToString("#"));
-                byte[] btmoney = Algorithmhelper.Int32_Bytes4(moneytemp + moneyBase);
-                Algorithmhelper.MemCopy<byte>(ref  new_card, 10, btmoney,0, 4);
-                if (StringVerdict(key_read) && StringVerdict(key_write))
-                {
-                    key_temp = Algorithmhelper.Key_string_byte(key_read);
-                    Algorithmhelper.MemCopy<byte>(ref  new_card, 14, key_temp, 0, 6);
-                    key_temp = Algorithmhelper.Key_string_byte(key_write);
-                    Algorithmhelper.MemCopy<byte>(ref  new_card, 20, key_temp, 0, 6);
-                }
-                else
-                {
-                    Card_Info.Message = "密码格式错误！";
-                    Console.WriteLine("密码格式错误");
-                }
-                CRC = Algorithmhelper.CrcCheck(new_card, length-2);
-                new_card[length - 2] =(byte)( CRC >> 8);
-                new_card[length - 1] = (byte)(CRC & 0x00ff);
-                SerialportObject.WriteByteToSerialPort(new_card, length);
-                Algorithmhelper.WriteLOG_Console(new_card, "开卡(发送)");
+               
             }
             catch (Exception error)
             {
@@ -215,53 +225,78 @@ namespace ICCardHelper
         /// <returns></returns>
         public CardInfo Recharge_card(string CardID, float  Money,byte recharge_flag=0x01)//充值
         {
-            if (Available_tags != 0x50)
-            {
-                Card_Info.Message = "卡异常，请联系管理员！";
-                Card_Info.Opcode = -3;
-                return Card_Info;
-            }
+           
             stopwatch.Start();
             int k = 0;
             const byte length = 23;
             const byte command_flag = 0x51;
             Int32 moneytemp;
             ushort CRC;
-            CardInitialization(ref Card_Info, ref consumptionRecordsObject);
+            
             try
             {
-                Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
-                Algorithmhelper.MemCopy<byte>(ref  recharge_card, 0, frameHead_byte, 0, 3);
-                recharge_card[3] = length;
-                recharge_card[4] = command_flag ;
-                recharge_card[5] = recharge_flag;
-                if (CardID != null)
+                delegateReadBlock = ReadBlock_card;
+                delegateReadBlock.Invoke (null, 8);
+                CardInitialization(ref Card_Info, ref consumptionRecordsObject);
+                if (continue_ornot )
                 {
-                    Int32 cardid = Convert.ToInt32(CardID);
-                    byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
-                    Algorithmhelper.MemCopy<byte>(ref recharge_card, 6, btid, 0, 4);
+                    if (Card_Available_tags == 0x50)
+                    {
+                        
+                        Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
+                        Algorithmhelper.MemCopy<byte>(ref  recharge_card, 0, frameHead_byte, 0, 3);
+                        recharge_card[3] = length;
+                        recharge_card[4] = command_flag;
+                        recharge_card[5] = recharge_flag;
+                        if (CardID != null)
+                        {
+                            Int32 cardid = Convert.ToInt32(CardID);
+                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            Algorithmhelper.MemCopy<byte>(ref recharge_card, 6, btid, 0, 4);
+                        }
+                        DateTime currentTime = DateTime.Now;
+                        int year = currentTime.Year, month = currentTime.Month, day = currentTime.Day, hour = currentTime.Hour, minute = currentTime.Minute, second = currentTime.Second;
+                        recharge_card[10] = Convert.ToByte(year.ToString().Substring(0, 2), 10);
+                        recharge_card[11] = Convert.ToByte(year.ToString().Substring(2, 2), 10);
+                        recharge_card[12] = (byte)currentTime.Month;
+                        recharge_card[13] = (byte)currentTime.Day;
+                        recharge_card[14] = (byte)currentTime.Hour;
+                        recharge_card[15] = (byte)currentTime.Minute;
+                        recharge_card[16] = (byte)currentTime.Second;
+                        string ttt = (100 * Money).ToString("#");//不要用科学计数法
+                        if (ttt == "")
+                            moneytemp = 0;
+                        else
+                            moneytemp = Convert.ToInt32(ttt);
+                        byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
+                        Algorithmhelper.MemCopy<byte>(ref recharge_card, 17, momey_temp, 0, 4);
+                        CRC = Algorithmhelper.CrcCheck(recharge_card, length - 2);
+                        recharge_card[length - 2] = (byte)(CRC >> 8);
+                        recharge_card[length - 1] = (byte)(CRC & 0x00ff);
+                        SerialportObject.WriteByteToSerialPort(recharge_card, length);
+                        Algorithmhelper.WriteLOG_Console(recharge_card, "充值(发送)");
+                    }
+                    if (Card_Available_tags == 0x5a)
+                    {
+                        Card_Info.Message = "锁卡，请联系管理员！";
+                        Card_Info.Opcode = -6;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x5e)
+                    {
+                        Card_Info.Message = "卡异常，请联系管理员！";
+                        Card_Info.Opcode = -7;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags ==0x00)
+                    {
+                        Card_Info.Message = "未开卡，请先开卡！";
+                        Card_Info.Opcode = -5;
+                        return Card_Info;
+                    }
+                    
                 }
-                DateTime currentTime = DateTime.Now;
-                int year=currentTime.Year , month=currentTime .Month , day=currentTime .Day , hour=currentTime .Hour , minute=currentTime .Minute , second=currentTime .Second ;
-                recharge_card[10] =Convert .ToByte (year .ToString ().Substring (0,2),10);
-                recharge_card[11] = Convert.ToByte(year.ToString().Substring(2, 2), 10);
-                recharge_card[12] = (byte)currentTime .Month ;
-                recharge_card[13] = (byte)currentTime.Day ;
-                recharge_card[14] = (byte)currentTime.Hour ;
-                recharge_card[15] = (byte)currentTime.Minute ;
-                recharge_card[16] = (byte)currentTime.Second ;
-                string ttt = (100 * Money).ToString("#");//不要用科学计数法
-                if (ttt == "")
-                    moneytemp = 0;
-                else 
-                   moneytemp = Convert .ToInt32 (ttt);
-                byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
-                Algorithmhelper.MemCopy<byte>(ref recharge_card , 17, momey_temp, 0, 4);
-                CRC = Algorithmhelper.CrcCheck(recharge_card, length-2);
-                recharge_card[length - 2] = (byte)(CRC >> 8);
-                recharge_card[length - 1] = (byte)(CRC & 0x00ff);
-                SerialportObject.WriteByteToSerialPort(recharge_card, length);
-                Algorithmhelper.WriteLOG_Console(recharge_card, "充值(发送)");
+                
             }
             catch (Exception error)
             {
@@ -324,12 +359,6 @@ namespace ICCardHelper
             //}
             #endregion
             stopwatch.Start();
-            if (Available_tags != 0x50)
-            {
-                Card_Info.Message = "卡异常，请联系管理员！";
-                Card_Info.Opcode = -3;
-                return Card_Info;
-            }
             int k = 0;
             const byte length = 22;
             const byte command_flag = 0x3C;
@@ -338,38 +367,67 @@ namespace ICCardHelper
             CardInitialization(ref Card_Info, ref consumptionRecordsObject);
             try
             {
-                Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
-                Algorithmhelper.MemCopy<byte>(ref deductions_card, 0, frameHead_byte, 0, 3);
-                deductions_card[3] = length;
-                deductions_card[4] = command_flag;
-                deductions_card[5] = deductions_flag;
-                if (CardID != null)
+                delegateReadBlock = ReadBlock_card;
+                delegateReadBlock.Invoke(null, 8);
+                CardInitialization(ref Card_Info, ref consumptionRecordsObject);
+                if(continue_ornot )
                 {
-                    Int32 cardid = Convert.ToInt32(CardID);
-                    byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
-                    Algorithmhelper.MemCopy<byte>(ref deductions_card, 6, btid, 0, 4);
+                    if (Card_Available_tags == 0x50)
+                    {
+                        Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
+                        Algorithmhelper.MemCopy<byte>(ref deductions_card, 0, frameHead_byte, 0, 3);
+                        deductions_card[3] = length;
+                        deductions_card[4] = command_flag;
+                        deductions_card[5] = deductions_flag;
+                        if (CardID != null)
+                        {
+                            Int32 cardid = Convert.ToInt32(CardID);
+                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            Algorithmhelper.MemCopy<byte>(ref deductions_card, 6, btid, 0, 4);
+                        }
+                        DateTime currentTime = DateTime.Now;
+                        int year = currentTime.Year, month = currentTime.Month, day = currentTime.Day, hour = currentTime.Hour, minute = currentTime.Minute, second = currentTime.Second;
+                        deductions_card[10] = Convert.ToByte(year.ToString().Substring(0, 2), 10);
+                        deductions_card[11] = Convert.ToByte(year.ToString().Substring(2, 2), 10);
+                        deductions_card[12] = (byte)currentTime.Month;
+                        deductions_card[13] = (byte)currentTime.Day;
+                        deductions_card[14] = (byte)currentTime.Hour;
+                        deductions_card[15] = (byte)currentTime.Minute;
+                        deductions_card[16] = (byte)currentTime.Second;
+                        string ttt = (100 * Money).ToString("#");//不要用科学计数法
+                        if (ttt == "")
+                            moneytemp = 0;
+                        else
+                            moneytemp = Convert.ToInt32(ttt);
+                        byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
+                        Algorithmhelper.MemCopy<byte>(ref deductions_card, 17, momey_temp, 1, 3);
+                        CRC = Algorithmhelper.CrcCheck(deductions_card, length - 2);
+                        deductions_card[length - 2] = (byte)(CRC >> 8);
+                        deductions_card[length - 1] = (byte)(CRC & 0x00ff);
+                        SerialportObject.WriteByteToSerialPort(deductions_card, length);
+                        Algorithmhelper.WriteLOG_Console(deductions_card, "扣款(发送)");
+                    }
+                    if (Card_Available_tags == 0x5a)
+                    {
+                        Card_Info.Message = "锁卡，请联系管理员！";
+                        Card_Info.Opcode = -6;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x5e)
+                    {
+                        Card_Info.Message = "卡异常，请联系管理员！";
+                        Card_Info.Opcode = -7;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x00)
+                    {
+                        Card_Info.Message = "未开卡，请先开卡！";
+                        Card_Info.Opcode = -5;
+                        return Card_Info;
+                    }
                 }
-                DateTime currentTime = DateTime.Now;
-                int year = currentTime.Year, month = currentTime.Month, day = currentTime.Day, hour = currentTime.Hour, minute = currentTime.Minute, second = currentTime.Second;
-                deductions_card[10] = Convert.ToByte(year.ToString().Substring(0, 2), 10);
-                deductions_card[11] = Convert.ToByte(year.ToString().Substring(2, 2), 10);
-                deductions_card[12] = (byte)currentTime.Month;
-                deductions_card[13] = (byte)currentTime.Day;
-                deductions_card[14] = (byte)currentTime.Hour;
-                deductions_card[15] = (byte)currentTime.Minute;
-                deductions_card[16] = (byte)currentTime.Second;
-                string ttt = (100 * Money).ToString("#");//不要用科学计数法
-                if (ttt == "")
-                    moneytemp = 0;
-                else
-                    moneytemp = Convert.ToInt32(ttt);
-                byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
-                Algorithmhelper.MemCopy<byte>(ref deductions_card, 17, momey_temp, 1, 3);
-                CRC = Algorithmhelper.CrcCheck(deductions_card, length-2);
-                deductions_card[length - 2] = (byte)(CRC >> 8);
-                deductions_card[length - 1] = (byte)(CRC & 0x00ff);
-                SerialportObject.WriteByteToSerialPort(deductions_card, length);
-                Algorithmhelper.WriteLOG_Console(deductions_card, "扣款(发送)");
+
+                
             }
             catch (Exception error)
             {
@@ -397,44 +455,66 @@ namespace ICCardHelper
             const byte length = 23;
             const byte command_flag = 0x51;
             ushort CRC;
-            if (Available_tags != 0x50)
-            {
-                Card_Info.Message = "卡异常，请联系管理员！";
-                Card_Info.Opcode = -3;
-                return Card_Info;
-            }
             CardInitialization(ref Card_Info, ref consumptionRecordsObject);
             try
             {
-                Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
-                Algorithmhelper.MemCopy<byte>(ref query_card, 0, frameHead_byte, 0, 3);
-                query_card[3] = length;
-                query_card[4] = command_flag;
-                query_card[5] = recharge_flag;
-                if (CardID != null)
+                delegateReadBlock = ReadBlock_card;
+                delegateReadBlock.Invoke(null, 8);
+                CardInitialization(ref Card_Info, ref consumptionRecordsObject);
+                if (continue_ornot )
                 {
-                    Int32 cardid = Convert.ToInt32(CardID);
-                    byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
-                    Algorithmhelper.MemCopy<byte>(ref query_card, 6, btid, 0, 4);
+                    if (Card_Available_tags == 0x50)
+                    {
+                        Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
+                        Algorithmhelper.MemCopy<byte>(ref query_card, 0, frameHead_byte, 0, 3);
+                        query_card[3] = length;
+                        query_card[4] = command_flag;
+                        query_card[5] = recharge_flag;
+                        if (CardID != null)
+                        {
+                            Int32 cardid = Convert.ToInt32(CardID);
+                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            Algorithmhelper.MemCopy<byte>(ref query_card, 6, btid, 0, 4);
+                        }
+                        DateTime currentTime = DateTime.Now;
+                        int year = currentTime.Year, month = currentTime.Month, day = currentTime.Day, hour = currentTime.Hour, minute = currentTime.Minute, second = currentTime.Second;
+                        query_card[10] = Convert.ToByte(year.ToString().Substring(0, 2), 10);
+                        query_card[11] = Convert.ToByte(year.ToString().Substring(2, 2), 10);
+                        query_card[12] = (byte)currentTime.Month;
+                        query_card[13] = (byte)currentTime.Day;
+                        query_card[14] = (byte)currentTime.Hour;
+                        query_card[15] = (byte)currentTime.Minute;
+                        query_card[16] = (byte)currentTime.Second;
+                        string strtem = (100 * Money).ToString("");
+                        Int32 moneytemp = Convert.ToInt32(strtem);
+                        byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
+                        Algorithmhelper.MemCopy<byte>(ref query_card, 17, momey_temp, 0, 4);
+                        CRC = Algorithmhelper.CrcCheck(query_card, length - 2);
+                        query_card[length - 2] = (byte)(CRC >> 8);
+                        query_card[length - 1] = (byte)(CRC & 0x00ff);
+                        SerialportObject.WriteByteToSerialPort(query_card, length);
+                        Algorithmhelper.WriteLOG_Console(query_card, "查询(发送)");
+                    }
+                    if (Card_Available_tags == 0x5a)
+                    {
+                        Card_Info.Message = "锁卡，请联系管理员！";
+                        Card_Info.Opcode = -6;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x5e)
+                    {
+                        Card_Info.Message = "卡异常，请联系管理员！";
+                        Card_Info.Opcode = -7;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x00)
+                    {
+                        Card_Info.Message = "未开卡，请先开卡！";
+                        Card_Info.Opcode = -5;
+                        return Card_Info;
+                    }
                 }
-                DateTime currentTime = DateTime.Now;
-                int year = currentTime.Year, month = currentTime.Month, day = currentTime.Day, hour = currentTime.Hour, minute = currentTime.Minute, second = currentTime.Second;
-                query_card[10] = Convert.ToByte(year.ToString().Substring(0, 2), 10);
-                query_card[11] = Convert.ToByte(year.ToString().Substring(2, 2), 10);
-                query_card[12] = (byte)currentTime.Month;
-                query_card[13] = (byte)currentTime.Day;
-                query_card[14] = (byte)currentTime.Hour;
-                query_card[15] = (byte)currentTime.Minute;
-                query_card[16] = (byte)currentTime.Second;
-                string strtem = (100 * Money).ToString("");
-                Int32 moneytemp = Convert.ToInt32(strtem);
-                byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
-                Algorithmhelper.MemCopy<byte>(ref query_card, 17, momey_temp, 0, 4);
-                CRC = Algorithmhelper.CrcCheck(query_card, length - 2);
-                query_card[length - 2] = (byte)(CRC >> 8);
-                query_card[length - 1] = (byte)(CRC & 0x00ff);
-                SerialportObject.WriteByteToSerialPort(query_card, length);
-                Algorithmhelper.WriteLOG_Console(query_card, "查询(发送)");
+                
             }
             catch (Exception error)
             {
@@ -463,47 +543,67 @@ namespace ICCardHelper
         /// <returns></returns>
         public CardInfo Initialize_card(string CardID)//销卡
         {
-            if (Available_tags == 0x5A)
-            {
-                Card_Info.Message = "卡异常，不能销卡，请联系管理员！";
-                Card_Info.Opcode = -3;
-                return Card_Info;
-            }
-            if (!Bill_clear)
-            {
-                Card_Info.Message = "还有未支付订单，请联系管理员！";
-                Card_Info.Opcode = -3;
-                return Card_Info;
-            }
+          
+          
             stopwatch.Start();
-            if (Available_tags != 0x50)
-            {
-                Card_Info.Message = "卡异常，请联系管理员！";
-                return Card_Info;
-            }
+           
             int k = 0;
             const byte length = 12;
             const byte command_flag = 0x38;
             ushort CRC;
-            CardInitialization(ref Card_Info, ref consumptionRecordsObject);
+            
             try
             {
-                Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
-                Algorithmhelper.MemCopy<byte>(ref initialize_card, 0, frameHead_byte, 0, 3);
-                initialize_card[3] = length;
-                initialize_card[4] = command_flag;
-                initialize_card[5] = 0xFF;
-                if (CardID != null)
+                delegateReadBlock = ReadBlock_card;
+                delegateReadBlock.Invoke (null, 8);
+                CardInitialization(ref Card_Info, ref consumptionRecordsObject);
+                if (continue_ornot )
                 {
-                    Int32 cardid = Convert.ToInt32(CardID);
-                    byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
-                    Algorithmhelper.MemCopy<byte>(ref initialize_card, 6, btid, 0, 4);
+                    if (Card_Available_tags == 0x50)
+                    {
+                        Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
+                        Algorithmhelper.MemCopy<byte>(ref initialize_card, 0, frameHead_byte, 0, 3);
+                        initialize_card[3] = length;
+                        initialize_card[4] = command_flag;
+                        initialize_card[5] = 0xFF;
+                        if (CardID != null)
+                        {
+                            Int32 cardid = Convert.ToInt32(CardID);
+                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            Algorithmhelper.MemCopy<byte>(ref initialize_card, 6, btid, 0, 4);
+                        }
+                        CRC = Algorithmhelper.CrcCheck(initialize_card, length - 2);
+                        initialize_card[length - 2] = (byte)(CRC >> 8);
+                        initialize_card[length - 1] = (byte)(CRC & 0x00ff);
+                        SerialportObject.WriteByteToSerialPort(initialize_card, length);
+                        Algorithmhelper.WriteLOG_Console(initialize_card, "销卡(发送)");
+                    }
+                    if (Card_Available_tags == 0x5a)
+                    {
+                        Card_Info.Message = "锁卡，请联系管理员！";
+                        Card_Info.Opcode = -6;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x5e)
+                    {
+                        Card_Info.Message = "卡异常，请联系管理员！";
+                        Card_Info.Opcode = -7;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x00)
+                    {
+                        Card_Info.Message = "未开卡，不用销卡！";
+                        Card_Info.Opcode = -5;
+                        return Card_Info;
+                    }
+                    if (!Bill_clear)
+                    {
+                        Card_Info.Message = "还有未支付订单，不能销卡！";
+                        Card_Info.Opcode = -8;
+                        return Card_Info;
+                    }
                 }
-                CRC = Algorithmhelper.CrcCheck(initialize_card, length-2);
-                initialize_card[length - 2] = (byte)(CRC >> 8);
-                initialize_card[length - 1] = (byte)(CRC & 0x00ff);
-                SerialportObject.WriteByteToSerialPort(initialize_card, length);
-                Algorithmhelper.WriteLOG_Console(initialize_card, "销卡(发送)");
+                
             }
             catch (Exception error)
             {
@@ -538,31 +638,43 @@ namespace ICCardHelper
             const byte command_flag = 0x47;
             byte[] key_temp = new byte[6];
             ushort CRC;
-            CardInitialization(ref Card_Info, ref consumptionRecordsObject);
             try
             {
-                Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
-                Algorithmhelper.MemCopy<byte>(ref load_Key_card, 0, frameHead_byte, 0, 3);
-                load_Key_card[3] = length;
-                load_Key_card[4] = command_flag;
-                load_Key_card[5] = 0xFF;
-                if (StringVerdict(key_read) && StringVerdict(key_write))
+                delegateReadBlock = ReadBlock_card;
+                delegateReadBlock.Invoke(null, 8);
+                CardInitialization(ref Card_Info, ref consumptionRecordsObject);
+                if (continue_ornot )
                 {
-                    key_temp = Algorithmhelper.Key_string_byte(key_read);
-                    Algorithmhelper.MemCopy<byte>(ref load_Key_card, 6, key_temp, 0, 6);
-                    key_temp = Algorithmhelper.Key_string_byte(key_write);
-                    Algorithmhelper.MemCopy<byte>(ref load_Key_card, 12, key_temp, 0, 6);
+                    Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
+                    Algorithmhelper.MemCopy<byte>(ref load_Key_card, 0, frameHead_byte, 0, 3);
+                    load_Key_card[3] = length;
+                    load_Key_card[4] = command_flag;
+                    load_Key_card[5] = 0xFF;
+                    if (StringVerdict(key_read) && StringVerdict(key_write))
+                    {
+                        key_temp = Algorithmhelper.Key_string_byte(key_read);
+                        Algorithmhelper.MemCopy<byte>(ref load_Key_card, 6, key_temp, 0, 6);
+                        key_temp = Algorithmhelper.Key_string_byte(key_write);
+                        Algorithmhelper.MemCopy<byte>(ref load_Key_card, 12, key_temp, 0, 6);
+                    }
+                    else
+                    {
+                        Card_Info.Message = "密码格式错误！";
+                        Console.WriteLine("密码格式错误");
+                    }
+                    CRC = Algorithmhelper.CrcCheck(load_Key_card, length - 2);
+                    load_Key_card[length - 2] = (byte)(CRC >> 8);
+                    load_Key_card[length - 1] = (byte)(CRC & 0x00ff);
+                    SerialportObject.WriteByteToSerialPort(load_Key_card, length);
+                    Algorithmhelper.WriteLOG_Console(load_Key_card, "装载密码(发送)");
                 }
                 else
                 {
-                    Card_Info.Message = "密码格式错误！";
-                    Console.WriteLine("密码格式错误");
+                    Card_Info.Message = "卡异常，请联系管理员！";
+                    Card_Info.Opcode = -7;
+                    return Card_Info;
                 }
-                CRC = Algorithmhelper.CrcCheck(load_Key_card, length-2);
-                load_Key_card[length - 2] = (byte)(CRC >> 8);
-                load_Key_card[length - 1] = (byte)(CRC & 0x00ff);
-                SerialportObject.WriteByteToSerialPort(load_Key_card, length);
-                Algorithmhelper.WriteLOG_Console(load_Key_card, "装载密码(发送)");
+               
             }
             catch (Exception error)
             {
@@ -591,12 +703,6 @@ namespace ICCardHelper
         public CardInfo ReadBlock_card (string CardID, Int32 block_num)
         {
             stopwatch.Start();
-            if (Available_tags != 0x50)
-            {
-                Card_Info.Message = "卡异常，请联系管理员！";
-                Card_Info.Opcode = -3;
-                return Card_Info;
-            }
             int k = 0;
             const byte length = 13;
             const byte command_flag = 0x5C;
@@ -604,23 +710,50 @@ namespace ICCardHelper
             CardInitialization(ref Card_Info, ref consumptionRecordsObject);
             try
             {
-                Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
-                Algorithmhelper.MemCopy<byte>(ref readBlock_card, 0, frameHead_byte, 0, 3);
-                readBlock_card[3] = length;
-                readBlock_card[4] = command_flag;
-                readBlock_card[5] = 0xFF;
-                if (CardID != null)
+                //delegateReadBlock = ReadBlock_card;
+                //delegateReadBlock(null, 8);
+               // if (continue_ornot )
                 {
-                    Int32 cardid = Convert.ToInt32(CardID);
-                    byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
-                    Algorithmhelper.MemCopy<byte>(ref readBlock_card, 6, btid, 0, 4);
+                  //  if (Card_Available_tags == 0x50)
+                    {
+                        Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
+                        Algorithmhelper.MemCopy<byte>(ref readBlock_card, 0, frameHead_byte, 0, 3);
+                        readBlock_card[3] = length;
+                        readBlock_card[4] = command_flag;
+                        readBlock_card[5] = 0xFF;
+                        if (CardID != null)
+                        {
+                            Int32 cardid = Convert.ToInt32(CardID);
+                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            Algorithmhelper.MemCopy<byte>(ref readBlock_card, 6, btid, 0, 4);
+                        }
+                        readBlock_card[10] = (byte)block_num;
+                        CRC = Algorithmhelper.CrcCheck(readBlock_card, length - 2);
+                        readBlock_card[length - 2] = (byte)(CRC >> 8);
+                        readBlock_card[length - 1] = (byte)(CRC & 0x00ff);
+                        SerialportObject.WriteByteToSerialPort(readBlock_card, length);
+                        Algorithmhelper.WriteLOG_Console(readBlock_card, "读块(发送)");
+                    }
+                    if (Card_Available_tags == 0x5a)
+                    {
+                        Card_Info.Message = "锁卡，请联系管理员！";
+                        Card_Info.Opcode = -6;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x5e)
+                    {
+                        Card_Info.Message = "卡异常，请联系管理员！";
+                        Card_Info.Opcode = -7;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x00)
+                    {
+                        Card_Info.Message = "未开卡，请先开卡！";
+                        Card_Info.Opcode = -5;
+                        return Card_Info;
+                    }
                 }
-                readBlock_card[10] =(byte) block_num;
-                CRC = Algorithmhelper.CrcCheck(readBlock_card, length-2);
-                readBlock_card[length - 2] = (byte)(CRC >> 8);
-                readBlock_card[length - 1] = (byte)(CRC & 0x00ff);
-                SerialportObject.WriteByteToSerialPort(readBlock_card, length);
-                Algorithmhelper.WriteLOG_Console(readBlock_card, "读块(发送)");
+                
             }
             catch (Exception error)
             {
@@ -630,7 +763,7 @@ namespace ICCardHelper
             }
             while (true)
             {
-                Thread.Sleep(900);
+                Thread.Sleep(700);
                 if (k >= 10 || Card_Info.Opcode != 0xFF)
                     break;
                 k++;
@@ -650,12 +783,6 @@ namespace ICCardHelper
         public CardInfo WriteBlock_card(string CardID, Int32 block_num,byte []bill,byte []moneyop,byte []lastmoney,byte flag=0xFF)
         {
             stopwatch.Start();
-            if (Available_tags != 0x50)
-            {
-                Card_Info.Message = "卡异常，请联系管理员！";
-                Card_Info.Opcode = -3;
-                return Card_Info;
-            }
             int k = 0;
             const byte length = 29;
             const byte command_flag = 0x3D;
@@ -663,26 +790,54 @@ namespace ICCardHelper
             CardInitialization(ref Card_Info, ref consumptionRecordsObject);
             try
             {
-                Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
-                Algorithmhelper.MemCopy<byte>(ref writeBlock_card, 0, frameHead_byte, 0, 3);
-                writeBlock_card[3] = length;
-                writeBlock_card[4] = command_flag;
-                writeBlock_card[5] = flag ;
-                if (CardID != null)
+                delegateReadBlock = ReadBlock_card;
+                delegateReadBlock.Invoke(null, 8);
+                CardInitialization(ref Card_Info, ref consumptionRecordsObject);
+                if (continue_ornot )
                 {
-                    Int32 cardid = Convert.ToInt32(CardID);
-                    byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
-                    Algorithmhelper.MemCopy<byte>(ref writeBlock_card, 6, btid, 0, 4);
+                    if (Card_Available_tags == 0x50)
+                    {
+                        Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
+                        Algorithmhelper.MemCopy<byte>(ref writeBlock_card, 0, frameHead_byte, 0, 3);
+                        writeBlock_card[3] = length;
+                        writeBlock_card[4] = command_flag;
+                        writeBlock_card[5] = flag;
+                        if (CardID != null)
+                        {
+                            Int32 cardid = Convert.ToInt32(CardID);
+                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            Algorithmhelper.MemCopy<byte>(ref writeBlock_card, 6, btid, 0, 4);
+                        }
+                        writeBlock_card[10] = (byte)block_num;
+                        Algorithmhelper.MemCopy<byte>(ref writeBlock_card, 11, bill, 0, 6);
+                        Algorithmhelper.MemCopy<byte>(ref writeBlock_card, 17, moneyop, 0, 3);
+                        Algorithmhelper.MemCopy<byte>(ref writeBlock_card, 20, LastmoneyReport, 0, 4);
+                        CRC = Algorithmhelper.CrcCheck(writeBlock_card, length - 2);
+                        writeBlock_card[length - 2] = (byte)(CRC >> 8);
+                        writeBlock_card[length - 1] = (byte)(CRC & 0x00ff);
+                        SerialportObject.WriteByteToSerialPort(writeBlock_card, length);
+                        Algorithmhelper.WriteLOG_Console(writeBlock_card, "写块(发送)");
+                    }
+                    if (Card_Available_tags == 0x5a)
+                    {
+                        Card_Info.Message = "锁卡，请联系管理员！";
+                        Card_Info.Opcode = -6;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x5e)
+                    {
+                        Card_Info.Message = "卡异常，请联系管理员！";
+                        Card_Info.Opcode = -7;
+                        return Card_Info;
+                    }
+                    if (Card_Available_tags == 0x00)
+                    {
+                        Card_Info.Message = "未开卡，请先开卡！";
+                        Card_Info.Opcode = -5;
+                        return Card_Info;
+                    }
                 }
-                writeBlock_card[10] = (byte)block_num;
-                Algorithmhelper.MemCopy<byte>(ref writeBlock_card, 11, bill, 0, 6);
-                Algorithmhelper.MemCopy<byte>(ref writeBlock_card, 17, moneyop, 0, 3);
-                Algorithmhelper.MemCopy<byte>(ref writeBlock_card, 20, LastmoneyReport, 0, 4);
-                CRC = Algorithmhelper.CrcCheck(writeBlock_card, length-2);
-                writeBlock_card[length - 2] = (byte)(CRC >> 8);
-                writeBlock_card[length - 1] = (byte)(CRC & 0x00ff);
-                SerialportObject.WriteByteToSerialPort(writeBlock_card, length);
-                Algorithmhelper.WriteLOG_Console(writeBlock_card, "写块(发送)");
+               
             }
             catch (Exception error)
             {
@@ -711,39 +866,70 @@ namespace ICCardHelper
         /// <returns></returns>
         public string QueryConsumptionRecords(string CardID)
         {
-            if (Available_tags != 0x50)
+            try
             {
-                Card_Info.Message = "卡异常，请联系管理员！";
-                Card_Info.Opcode = -3;
-                return JsonHelper.Jsonhelper.ObjectToJson<List<ConsumptionRecords>>(consumptionRecordsList);
-            }
-            int i = 0;
-            consumptionRecordsList.RemoveRange(0, consumptionRecordsList.Count);
-            delegateReadBlock = ReadBlock_card;
-
-            #region 读参数信息，获取订单记录
-            {
-                card_info_read_temp = new CardInfo();
-                card_info_read_temp = delegateReadBlock.Invoke(null, 8); //暂时注释掉
-                if (card_info_read_temp.Opcode == 0)
+                if (continue_ornot )
                 {
-                    //bill_Sum =(byte) card_info_read_temp.Debt_count;
-                    //Algorithmhelper.MemCopy<byte>(ref money_before_deductions_temp, 0, money_before_deductions_temp, 0, 4);
-                }
-            }
-               
-            #endregion
-            
-            for (; i < bill_Sum+1 ; i++)
-            {
-                CardInfo temp = ReadBlock_card(null,reflection_table [i]);
-                Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ", temp.Card_ID, temp.Message, temp.Money, temp.Opcode);
+                    delegateReadBlock = ReadBlock_card;
+                    delegateReadBlock.Invoke(null, 8);
+                    CardInitialization(ref Card_Info, ref consumptionRecordsObject);
+                    if (Card_Available_tags == 0x50)
+                    {
+                        int i = 0;
+                        consumptionRecordsList.RemoveRange(0, consumptionRecordsList.Count);
+                        delegateReadBlock = ReadBlock_card;
 
+                        #region 读参数信息，获取订单记录
+                        {
+                            card_info_read_temp = new CardInfo();
+                            card_info_read_temp = delegateReadBlock.Invoke(null, 8); //暂时注释掉
+                            if (card_info_read_temp.Opcode == 0)
+                            {
+                                //bill_Sum =(byte) card_info_read_temp.Debt_count;
+                                //Algorithmhelper.MemCopy<byte>(ref money_before_deductions_temp, 0, money_before_deductions_temp, 0, 4);
+                            }
+                        }
+
+                        #endregion
+
+                        for (; i < bill_Sum + 1; i++)
+                        {
+                            CardInfo temp = ReadBlock_card(null, reflection_table[i]);
+                            Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ", temp.Card_ID, temp.Message, temp.Money, temp.Opcode);
+
+                        }
+                        //var RecordsList = consumptionRecordsList.Where<ConsumptionRecords>(s => s.Block_NUM != 8);
+                        //return JsonHelper.Jsonhelper.ObjectToJson<List<ConsumptionRecords>>(RecordsList);
+                        consumptionRecordsList.RemoveRange(0, 1);
+                    }
+                    if (Card_Available_tags == 0x5a)
+                    {
+                        Card_Info.Message = "锁卡，请联系管理员！";
+                        Card_Info.Opcode = -6;
+                        return null ;
+                    }
+                    if (Card_Available_tags == 0x5e)
+                    {
+                        Card_Info.Message = "卡异常，请联系管理员！";
+                        Card_Info.Opcode = -7;
+                        return null ;
+                    }
+                    if (Card_Available_tags == 0x00)
+                    {
+                        Card_Info.Message = "未开卡，无订单可查！";
+                        Card_Info.Opcode = -5;
+                        return null ;
+                    }
+                }
+                
             }
-            //var RecordsList = consumptionRecordsList.Where<ConsumptionRecords>(s => s.Block_NUM != 8);
-            //return JsonHelper.Jsonhelper.ObjectToJson<List<ConsumptionRecords>>(RecordsList);
-            consumptionRecordsList.RemoveRange(0, 1);
-            return JsonHelper.Jsonhelper.ObjectToJson <List<ConsumptionRecords>> (consumptionRecordsList);
+            catch (Exception error)
+            {
+                Card_Info.Message = error.Message;
+                Card_Info.Opcode = 0xFF;
+                Algorithmhelper.WriteLOG_Console(writeBlock_card, "写块——异常：" + error.Message + "(发送)");
+            }
+            return JsonHelper.Jsonhelper.ObjectToJson<List<ConsumptionRecords>>(consumptionRecordsList);
         }
         void serialport1_ResceiveMessage(object sender, SerialRecieveEventArgs e)
         {
@@ -845,9 +1031,11 @@ namespace ICCardHelper
                                 Card_Info.Last_record_serial_number = recBuffer[18];
                                 Card_Info.Message = "卡正常";
                                 bill_Sum = recBuffer[18];
-                                Available_tags = recBuffer[19];
+                                Card_Available_tags = recBuffer[19];
+                                if (recBuffer [5]==0x00)
+                                    continue_ornot =true ;
                                // Card_Info.Card_status = recBuffer[19];//卡状态
-                                if (recBuffer[19] == 0x50)
+                                if (recBuffer[19] == 0x50) 
                                     Card_statebool = true; 
                                 if ((recBuffer[20] & 0xff) != 0 || (recBuffer[21] & 0xff) != 0 || (recBuffer[22] & 0xff) != 0 || (recBuffer[23] & 0xff) != 0)
                                     Bill_clear = false;
@@ -876,6 +1064,7 @@ namespace ICCardHelper
                                 Card_Info.Opcode = 0x00;
                                 //Console.WriteLine(Card_Info.Message);
                                 NewCard_flag = true;
+                                Card_Info.Card_status = 0x50;//修改卡的状态
                                 Console.WriteLine("开卡成功！");
                                 break;
                             case 0x01:            //部分成功
@@ -910,7 +1099,7 @@ namespace ICCardHelper
                                 Console.WriteLine(Card_Info.Message);
                                 Card_Info.Card_ID = Algorithmhelper.Byte4_Int64(recBuffer, 6,4).ToString ();
                                 Card_Info.Money =(((float)(Algorithmhelper.Byte4_Int64(recBuffer, 10,4) - moneyBase)) / 100).ToString ("#.00");
-                                Card_Info.Card_status = Available_tags;
+                                Card_Info.Card_status = Card_Available_tags;
                                 break;
                             case 0x0F:              //操作失败    
                                 Card_Info.Opcode = -3;
@@ -940,7 +1129,7 @@ namespace ICCardHelper
                                 Card_Info.Card_ID  = Algorithmhelper .Byte4_Int64 (recBuffer ,6,4).ToString ();
                                 Card_Info.Money = (((float)(Algorithmhelper.Byte4_Int64(recBuffer, 10,4) - moneyBase)) / 100).ToString ("#.00");
                                 Card_Info.Message = "操作成功";
-                                Card_Info.Card_status = Available_tags;
+                                Card_Info.Card_status = Card_Available_tags;
                                 #region 仅做测试用
 
                                 //Algorithmhelper .MemCopy <byte>(ref tempbill ,0,deductions_card,11,6);//账单，写块时使用
@@ -1022,7 +1211,7 @@ namespace ICCardHelper
                                 Card_Info.Opcode  = 0;
                                 Card_Info.Message = "操作成功";
                                 Console.WriteLine(Card_Info.Message);
-                                Card_Info.Card_status = Available_tags;
+                                Card_Info.Card_status =Card_Available_tags;
                                 break;
                             case 0x0F:
                                 Card_Info.Opcode = -3;
@@ -1054,7 +1243,7 @@ namespace ICCardHelper
                                     const byte length=6;
                                     Card_Info.Card_ID = Algorithmhelper.Byte4_Int64(recBuffer, 6,4).ToString();
                                     Card_Info.Message = "操作成功";
-                                    Card_Info.Card_status = Available_tags;
+                                    Card_Info.Card_status = Card_Available_tags;
                                     //consumptionRecordsObject.Block_NUM = recBuffer[8];
                                     //consumptionRecordsObject.Balance =Algorithmhelper .Byte4_Int32(recBuffer ,2).ToString ();
                                     if (recBuffer [10]==8)//参数信息
@@ -1064,7 +1253,13 @@ namespace ICCardHelper
                                         //parameterInfoObject.Balance = Algorithmhelper.Byte4_Int32(deductions_money_temp, 0, 4).ToString();
                                         //parameterInfoObject.Block_NUM = block_num_pram;
                                         //parameterInfoObject.Debt_count = recBuffer[17];
-                                        bill_Sum = recBuffer[19];
+                                        bill_Sum = recBuffer[19];//账单总数
+                                        Card_Available_tags = recBuffer[20];
+                                        if ((recBuffer[21] & 0xff) != 0 || (recBuffer[22] & 0xff) != 0 || (recBuffer[23] & 0xff) != 0 || (recBuffer[24] & 0xff) != 0)
+                                            Bill_clear = false;
+                                        if (recBuffer[20] == 0x50)
+                                            continue_ornot = true;
+                                        
                                     }
                                      StringBuilder strtemp=new StringBuilder();
                                     for (byte p=0;p<length ;p++)
@@ -1129,7 +1324,7 @@ namespace ICCardHelper
                                     Card_Info.Card_ID = Algorithmhelper.Byte4_Int64(recBuffer, 6,4).ToString();
                                     Card_Info.Message = "操作成功";
                                     consumptionRecordsObject.Message = "成功";//操作信息
-                                    Card_Info.Card_status = Available_tags;
+                                    Card_Info.Card_status = Card_Available_tags;
                                     //consumptionRecordsObject.Balance = Algorithmhelper.Byte4_Int32(money_current_temp,0,4).ToString ();//当前金额
                                     consumptionRecordsObject.BalanceBeforedeductions = Algorithmhelper.Byte4_Int64(money_before_deductions_temp, 0,4).ToString("#.00");//扣款前金额
                                     consumptionRecordsObject .DeductionsAmount =Algorithmhelper .Byte4_Int64 (deductions_money_temp ,0,3).ToString ("#.00");//扣款金额

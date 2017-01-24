@@ -47,7 +47,7 @@ namespace eCardInfo
         }
         /// <summary>
         /// 卡状态
-        /// 0x50:正常卡；0x5a:锁卡；0x5e:卡异常；0x00：未开卡；其他：未知卡
+        /// 0x50:正常卡；0x5a:锁卡；0x00：未开卡；其他：未知卡
         /// </summary>
         private int card_status;
         public  int Card_status

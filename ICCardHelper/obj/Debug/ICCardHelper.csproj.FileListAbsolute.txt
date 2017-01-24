@@ -42,3 +42,6 @@ F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\D
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\Newtonsoft.Json.xml
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\obj\Debug\ICCardHelper.dll
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\obj\Debug\ICCardHelper.pdb
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\obj\Debug\ICCardHelper.csprojResolveAssemblyReference.cache
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\eCardProtocol.exe
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\eCardProtocol.pdb
