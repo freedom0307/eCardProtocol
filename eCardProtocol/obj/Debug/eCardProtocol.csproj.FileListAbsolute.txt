@@ -42,9 +42,12 @@ E:\电享\20170120\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.Propertie
 E:\电享\20170120\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.csproj.GenerateResource.Cache
 E:\电享\20170120\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.exe
 E:\电享\20170120\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.pdb
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.csprojResolveAssemblyReference.cache
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.Frm_portSet.resources
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.frm_Test.resources
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.Properties.Resources.resources
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.csproj.GenerateResource.Cache
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\Debug\eCardProtocol.exe.config
-F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.exe
-F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.pdb
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\Debug\eCardProtocol.exe
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\Debug\eCardProtocol.pdb
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\Debug\AlgorithmHelper.dll
@@ -59,8 +62,8 @@ F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\Debug\JsonHelper.pdb
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\Debug\SerialportHelper.pdb
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\Debug\Newtonsoft.Json.xml
-F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.csprojResolveAssemblyReference.cache
-F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.Frm_portSet.resources
-F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.frm_Test.resources
-F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.Properties.Resources.resources
-F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.csproj.GenerateResource.Cache
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.exe
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.pdb
+I:\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\Debug\eCardProtocol.exe.config
+I:\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.exe
+I:\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.pdb

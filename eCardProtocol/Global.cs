@@ -11,6 +11,6 @@ namespace eCardProtocol
     public  class Global
     {
         public static ICCardHelper.CardProtocol card = new CardProtocol();
-        public static CardInfo CardinformationObject=null ;
+        public static CardInfo CardinformationObject = null;
     }
 }

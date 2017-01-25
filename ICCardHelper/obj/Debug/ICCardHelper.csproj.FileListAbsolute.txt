@@ -28,13 +28,16 @@ E:\电享\20170120\eCardProtocol\ICCardHelper\bin\Debug\Newtonsoft.Json.xml
 E:\电享\20170120\eCardProtocol\ICCardHelper\obj\Debug\ICCardHelper.dll
 E:\电享\20170120\eCardProtocol\ICCardHelper\obj\Debug\ICCardHelper.pdb
 E:\电享\20170120\eCardProtocol\ICCardHelper\obj\Debug\ICCardHelper.csprojResolveAssemblyReference.cache
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\obj\Debug\ICCardHelper.csprojResolveAssemblyReference.cache
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\ICCardHelper.dll
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\ICCardHelper.pdb
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\AlgorithmHelper.dll
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\eCardInfo.dll
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\eCardProtocol.exe
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\JsonHelper.dll
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\SerialportHelper.dll
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\Newtonsoft.Json.dll
+F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\eCardProtocol.pdb
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\AlgorithmHelper.pdb
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\eCardInfo.pdb
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\JsonHelper.pdb
@@ -42,6 +45,3 @@ F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\D
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\Newtonsoft.Json.xml
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\obj\Debug\ICCardHelper.dll
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\obj\Debug\ICCardHelper.pdb
-F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\obj\Debug\ICCardHelper.csprojResolveAssemblyReference.cache
-F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\eCardProtocol.exe
-F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\ICCardHelper\bin\Debug\eCardProtocol.pdb

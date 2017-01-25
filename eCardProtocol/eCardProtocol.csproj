@@ -38,12 +38,13 @@
     <Reference Include="AlgorithmHelper">
       <HintPath>..\AlgorithmHelper\bin\Debug\AlgorithmHelper.dll</HintPath>
     </Reference>
-    <Reference Include="eCardInfo">
+    <Reference Include="eCardInfo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\eCardInfo\bin\Debug\eCardInfo.dll</HintPath>
     </Reference>
     <Reference Include="ICCardHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ICCardHelper\bin\Debug\ICCardHelper.dll</HintPath>
+      <HintPath>..\..\..\WindowsFormsApplication2\ICCardHelper\bin\Debug\ICCardHelper.dll</HintPath>
     </Reference>
     <Reference Include="JsonHelper">
       <HintPath>..\JsonHelper\bin\Debug\JsonHelper.dll</HintPath>
