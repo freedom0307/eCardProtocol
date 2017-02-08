@@ -24,3 +24,7 @@ F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debu
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\AlgorithmHelper.pdb
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\JsonHelper.pdb
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\Newtonsoft.Json.xml
+I:\20170202\eCardProtocol1.1\eCardProtocol\eCardInfo\bin\Debug\eCardInfo.pdb
+I:\20170202\eCardProtocol1.1\eCardProtocol\eCardInfo\obj\Debug\eCardInfo.csprojResolveAssemblyReference.cache
+I:\20170202\eCardProtocol1.1\eCardProtocol\eCardInfo\obj\Debug\eCardInfo.dll
+I:\20170202\eCardProtocol1.1\eCardProtocol\eCardInfo\obj\Debug\eCardInfo.pdb

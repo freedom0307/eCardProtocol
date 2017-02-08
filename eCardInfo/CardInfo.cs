@@ -66,27 +66,27 @@ namespace eCardInfo
             set { message = value; }
         }
 
-        /// <summary>
-        /// 用户名
-        /// </summary>
-        private string user_name;
+        ///// <summary>
+        ///// 用户名
+        ///// </summary>
+        //private string user_name;
 
-        public string User_name
-        {
-            get { return user_name; }
-            set { user_name = value; }
-        }
+        //public string User_name
+        //{
+        //    get { return user_name; }
+        //    set { user_name = value; }
+        //}
 
-        /// <summary>
-        /// 手机号
-        /// </summary>
-        private string mobile;
+        ///// <summary>
+        ///// 手机号
+        ///// </summary>
+        //private string mobile;
 
-        public string Mobile
-        {
-            get { return mobile; }
-            set { mobile = value; }
-        }
+        //public string Mobile
+        //{
+        //    get { return mobile; }
+        //    set { mobile = value; }
+        //}
         /// <summary>
         /// 欠款次数
         /// </summary>

@@ -12,3 +12,13 @@ F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\bi
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.csprojResolveAssemblyReference.cache
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.dll
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.pdb
+E:\电享\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\bin\Debug\AlgorithmHelper.dll
+E:\电享\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\bin\Debug\AlgorithmHelper.pdb
+E:\电享\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.csprojResolveAssemblyReference.cache
+E:\电享\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.dll
+E:\电享\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.pdb
+I:\20170202\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\bin\Debug\AlgorithmHelper.dll
+I:\20170202\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\bin\Debug\AlgorithmHelper.pdb
+I:\20170202\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.csprojResolveAssemblyReference.cache
+I:\20170202\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.dll
+I:\20170202\eCardProtocol1.1\eCardProtocol\AlgorithmHelper\obj\Debug\AlgorithmHelper.pdb

@@ -66,6 +66,7 @@ namespace ICCardHelper
         byte Card_Available_tags;//卡可用状态标记
         bool Bill_clear=true  ;
         bool continue_ornot = false;
+        bool new_card_flag = false;
         private byte[] reflection_table = new byte[32]{9,10,12,13,14,16,17,18,20,21,22,24,25,26,28,29,30,32,33,34,36,37,38,40,41,42,44,45,46,48,49,50};
 
         #region virtual test data
@@ -118,7 +119,7 @@ namespace ICCardHelper
             }
             while (true)
             {
-                Thread.Sleep(700);
+                Thread.Sleep(100);
                 if (k >= 10 || Card_Info.Opcode  != 0xFF)
                     break;
                 k++;
@@ -140,17 +141,18 @@ namespace ICCardHelper
            
             stopwatch.Start();
             int k = 0;
+            new_card_flag = true;
             const byte length=30;
             const byte command_flag=0x2C;
             byte[] key_temp = new byte[6];
-            Int32 moneytemp;
+            Int64 moneytemp;
             CardInitialization(ref Card_Info, ref consumptionRecordsObject);
            
             ushort CRC;
             try
             {
-                //delegateReadBlock = ReadBlock_card;
-                //delegateReadBlock(null, 8);
+                delegateReadBlock = ReadBlock_card;
+                delegateReadBlock(null, 8);
                 if (continue_ornot )
                 {
                     if (Card_Available_tags == 0x50)
@@ -175,15 +177,15 @@ namespace ICCardHelper
                     if (CardID != null)
                     {
                         Int32 cardid = Convert.ToInt32(CardID);
-                        byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                        byte[] btid = Algorithmhelper.Int64_Bytes4(cardid);
                         Algorithmhelper.MemCopy<byte>(ref  new_card, 6, btid, 0, 4);
                     }
                     string ttt = (100 * Money).ToString("#");//不要用科学计数法
                     if (ttt == "")
                         moneytemp = 0;
                     else
-                        moneytemp = Convert.ToInt32(ttt);
-                    byte[] btmoney = Algorithmhelper.Int32_Bytes4(moneytemp + moneyBase);
+                        moneytemp = Convert.ToInt64(ttt);
+                    byte[] btmoney = Algorithmhelper.Int64_Bytes4(moneytemp + moneyBase);
                     Algorithmhelper.MemCopy<byte>(ref  new_card, 10, btmoney, 0, 4);
                     if (StringVerdict(key_read) && StringVerdict(key_write))
                     {
@@ -213,12 +215,13 @@ namespace ICCardHelper
             }
             while (true)
             {
-                Thread.Sleep(700);
+                Thread.Sleep(500);
                 if (k >= 10 || Card_Info.Opcode != 0xFF)
                     break;
                 k++;
 
             }
+            new_card_flag = false;
             return Card_Info;
             stopwatch.Stop();
             TimeSpan ts = stopwatch.Elapsed;
@@ -236,7 +239,7 @@ namespace ICCardHelper
             int k = 0;
             const byte length = 23;
             const byte command_flag = 0x51;
-            Int32 moneytemp;
+            Int64 moneytemp;
             ushort CRC;
             
             try
@@ -258,7 +261,7 @@ namespace ICCardHelper
                         if (CardID != null)
                         {
                             Int32 cardid = Convert.ToInt32(CardID);
-                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            byte[] btid = Algorithmhelper.Int64_Bytes4(cardid);
                             Algorithmhelper.MemCopy<byte>(ref recharge_card, 6, btid, 0, 4);
                         }
                         DateTime currentTime = DateTime.Now;
@@ -275,7 +278,7 @@ namespace ICCardHelper
                             moneytemp = 0;
                         else
                             moneytemp = Convert.ToInt32(ttt);
-                        byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
+                        byte[] momey_temp = Algorithmhelper.Int64_Bytes4(moneytemp);
                         Algorithmhelper.MemCopy<byte>(ref recharge_card, 17, momey_temp, 0, 4);
                         CRC = Algorithmhelper.CrcCheck(recharge_card, length - 2);
                         recharge_card[length - 2] = (byte)(CRC >> 8);
@@ -313,7 +316,7 @@ namespace ICCardHelper
             }
             while (true)
             {
-                Thread.Sleep(700);
+                Thread.Sleep(200);
                 if (k >= 10 || Card_Info.Opcode != 0xFF)
                     break;
                 k++;
@@ -370,7 +373,7 @@ namespace ICCardHelper
             const byte length = 22;
             const byte command_flag = 0x3C;
             ushort CRC;
-            Int32 moneytemp;
+            Int64 moneytemp;
             CardInitialization(ref Card_Info, ref consumptionRecordsObject);
             try
             {
@@ -390,7 +393,7 @@ namespace ICCardHelper
                         if (CardID != null)
                         {
                             Int32 cardid = Convert.ToInt32(CardID);
-                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            byte[] btid = Algorithmhelper.Int64_Bytes4(cardid);
                             Algorithmhelper.MemCopy<byte>(ref deductions_card, 6, btid, 0, 4);
                         }
                         DateTime currentTime = DateTime.Now;
@@ -407,7 +410,7 @@ namespace ICCardHelper
                             moneytemp = 0;
                         else
                             moneytemp = Convert.ToInt32(ttt);
-                        byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
+                        byte[] momey_temp = Algorithmhelper.Int64_Bytes4(moneytemp);
                         Algorithmhelper.MemCopy<byte>(ref deductions_card, 17, momey_temp, 1, 3);
                         CRC = Algorithmhelper.CrcCheck(deductions_card, length - 2);
                         deductions_card[length - 2] = (byte)(CRC >> 8);
@@ -445,7 +448,7 @@ namespace ICCardHelper
             }
             while (true)
             {
-                Thread.Sleep(700);
+                Thread.Sleep(200);
                 if (k >= 10 || Card_Info.Opcode != 0xFF)
                     break;
                 k++;
@@ -482,7 +485,7 @@ namespace ICCardHelper
                         if (CardID != null)
                         {
                             Int32 cardid = Convert.ToInt32(CardID);
-                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            byte[] btid = Algorithmhelper.Int64_Bytes4(cardid);
                             Algorithmhelper.MemCopy<byte>(ref query_card, 6, btid, 0, 4);
                         }
                         DateTime currentTime = DateTime.Now;
@@ -496,7 +499,7 @@ namespace ICCardHelper
                         query_card[16] = (byte)currentTime.Second;
                         string strtem = (100 * Money).ToString("");
                         Int32 moneytemp = Convert.ToInt32(strtem);
-                        byte[] momey_temp = Algorithmhelper.Int32_Bytes4(moneytemp);
+                        byte[] momey_temp = Algorithmhelper.Int64_Bytes4(moneytemp);
                         Algorithmhelper.MemCopy<byte>(ref query_card, 17, momey_temp, 0, 4);
                         CRC = Algorithmhelper.CrcCheck(query_card, length - 2);
                         query_card[length - 2] = (byte)(CRC >> 8);
@@ -533,7 +536,7 @@ namespace ICCardHelper
             }
             while (true)
             {
-                Thread.Sleep(700);
+                Thread.Sleep(800);
                 if (k >= 10 || Card_Info.Opcode != 0xFF)
                     break;
                 k++;
@@ -579,7 +582,7 @@ namespace ICCardHelper
                         if (CardID != null)
                         {
                             Int32 cardid = Convert.ToInt32(CardID);
-                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            byte[] btid = Algorithmhelper.Int64_Bytes4(cardid);
                             Algorithmhelper.MemCopy<byte>(ref initialize_card, 6, btid, 0, 4);
                         }
                         CRC = Algorithmhelper.CrcCheck(initialize_card, length - 2);
@@ -623,7 +626,7 @@ namespace ICCardHelper
             }
             while (true)
             {
-                Thread.Sleep(700);
+                Thread.Sleep(200);
                 if (k >= 10 || Card_Info.Opcode != 0xFF)
                     break;
                 k++;
@@ -650,11 +653,11 @@ namespace ICCardHelper
             ushort CRC;
             try
             {
-                delegateReadBlock = ReadBlock_card;
-                delegateReadBlock.Invoke(null, 8);
-                Thread.Sleep(50);
+                //delegateReadBlock = ReadBlock_card;
+                //delegateReadBlock.Invoke(null, 8);
+                //Thread.Sleep(50);
                 CardInitialization(ref Card_Info, ref consumptionRecordsObject);
-                if (continue_ornot )
+                //if (continue_ornot )
                 {
                     Algorithmhelper.StringArray_ByteArray(frameHead_string, out frameHead_byte);//
                     Algorithmhelper.MemCopy<byte>(ref load_Key_card, 0, frameHead_byte, 0, 3);
@@ -679,12 +682,12 @@ namespace ICCardHelper
                     SerialportObject.WriteByteToSerialPort(load_Key_card, length);
                     Algorithmhelper.WriteLOG_Console(load_Key_card, "装载密码(发送)");
                 }
-                else
-                {
-                    Card_Info.Message = "卡异常，请联系管理员！";
-                    Card_Info.Opcode = -7;
-                    return Card_Info;
-                }
+                //else
+                //{
+                //    Card_Info.Message = "卡异常，请联系管理员！";
+                //    Card_Info.Opcode = -7;
+                //    return Card_Info;
+                //}
                
             }
             catch (Exception error)
@@ -695,7 +698,7 @@ namespace ICCardHelper
             }
             while (true)
             {
-                Thread.Sleep(700);
+                Thread.Sleep(100);
                 if (k >= 10 || Card_Info.Opcode != 0xFF)
                     break;
                 k++;
@@ -735,7 +738,7 @@ namespace ICCardHelper
                         if (CardID != null)
                         {
                             Int32 cardid = Convert.ToInt32(CardID);
-                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            byte[] btid = Algorithmhelper.Int64_Bytes4(cardid);
                             Algorithmhelper.MemCopy<byte>(ref readBlock_card, 6, btid, 0, 4);
                         }
                         readBlock_card[10] = (byte)block_num;
@@ -757,12 +760,16 @@ namespace ICCardHelper
                         Card_Info.Opcode = -7;
                         return Card_Info;
                     }
-                    if (Card_Available_tags == 0x00)
+                    if (!new_card_flag)
                     {
-                        Card_Info.Message = "未开卡，请先开卡！";
-                        Card_Info.Opcode = -5;
-                        return Card_Info;
+                        if (Card_Available_tags == 0x00)
+                        {
+                            Card_Info.Message = "未开卡，请先开卡！";
+                            Card_Info.Opcode = -5;
+                            return Card_Info;
+                        }
                     }
+                   
                 }
                 
             }
@@ -774,7 +781,7 @@ namespace ICCardHelper
             }
             while (true)
             {
-                Thread.Sleep(700);
+                Thread.Sleep(100);
                 if (k >= 10 || Card_Info.Opcode != 0xFF)
                     break;
                 k++;
@@ -817,7 +824,7 @@ namespace ICCardHelper
                         if (CardID != null)
                         {
                             Int32 cardid = Convert.ToInt32(CardID);
-                            byte[] btid = Algorithmhelper.Int32_Bytes4(cardid);
+                            byte[] btid = Algorithmhelper.Int64_Bytes4(cardid);
                             Algorithmhelper.MemCopy<byte>(ref writeBlock_card, 6, btid, 0, 4);
                         }
                         writeBlock_card[10] = (byte)block_num;
@@ -859,7 +866,7 @@ namespace ICCardHelper
             }
             while (true)
             {
-                Thread.Sleep(700);
+                Thread.Sleep(100);
                 if (k >= 10 || Card_Info.Opcode != 0xFF)
                     break;
                 k++;
@@ -878,6 +885,7 @@ namespace ICCardHelper
         /// <returns></returns>
         public string QueryConsumptionRecords(string CardID)
         {
+            int k = 0;
             try
             {
                 if (continue_ornot )
@@ -941,6 +949,14 @@ namespace ICCardHelper
                 Card_Info.Message = error.Message;
                 Card_Info.Opcode = 0xFF;
                 Algorithmhelper.WriteLOG_Console(writeBlock_card, "写块——异常：" + error.Message + "(发送)");
+            }
+            while (true)
+            {
+                Thread.Sleep(100);
+                if (k >= 10 || Card_Info.Opcode != 0xFF)
+                    break;
+                k++;
+
             }
             return JsonHelper.Jsonhelper.ObjectToJson<List<ConsumptionRecords>>(consumptionRecordsList);
         }
@@ -1458,11 +1474,11 @@ namespace ICCardHelper
                 cardinfo.Debt_count = 0;
                 cardinfo.Debt_count_max = 0;
                 cardinfo.Last_record_serial_number = 0;
-                cardinfo.Message = string.Empty;
-                cardinfo.Mobile = string.Empty;
+                cardinfo.Message ="失败";
+                //cardinfo.Mobile = string.Empty;
                 cardinfo.Money = "0.00";
                 cardinfo.Opcode = 0xFF;
-                cardinfo.User_name = string.Empty;
+                //cardinfo.User_name = string.Empty;
             }
             else
             {

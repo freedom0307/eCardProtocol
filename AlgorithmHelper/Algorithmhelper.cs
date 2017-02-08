@@ -126,7 +126,7 @@ namespace AlgorithmHelper
              return (Int16)(CRCHi << 8 | CRCLo);
          }
         #endregion
-         public static byte[] Int32_Bytes4(int n)
+         public static byte[] Int64_Bytes4(Int64  n) 
          {
              byte[] b = new byte[4];
 

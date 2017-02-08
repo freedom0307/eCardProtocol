@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>eCardInfo</RootNamespace>
     <AssemblyName>eCardInfo</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,9 +35,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\eCardInfo.dll</HintPath>
     </Reference>
-    <Reference Include="SerialportHelper">
-      <HintPath>..\SerialportHelper\bin\Debug\SerialportHelper.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -48,12 +46,6 @@
   <ItemGroup>
     <Compile Include="CardInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ICCardHelper\ICCardHelper.csproj">
-      <Project>{7fb26733-124e-460c-a8ed-4b05c7bef33f}</Project>
-      <Name>ICCardHelper</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

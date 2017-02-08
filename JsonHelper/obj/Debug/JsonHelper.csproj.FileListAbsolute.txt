@@ -14,3 +14,12 @@ F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\JsonHelper\bin\Deb
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\JsonHelper\obj\Debug\JsonHelper.csprojResolveAssemblyReference.cache
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\JsonHelper\obj\Debug\JsonHelper.dll
 F:\visual studio 2013\Projects\eCardProtocol1.1\eCardProtocol\JsonHelper\obj\Debug\JsonHelper.pdb
+I:\20170202\eCardProtocol1.1\eCardProtocol\JsonHelper\bin\Debug\JsonHelper.dll
+I:\20170202\eCardProtocol1.1\eCardProtocol\JsonHelper\bin\Debug\JsonHelper.pdb
+I:\20170202\eCardProtocol1.1\eCardProtocol\JsonHelper\bin\Debug\AlgorithmHelper.dll
+I:\20170202\eCardProtocol1.1\eCardProtocol\JsonHelper\bin\Debug\Newtonsoft.Json.dll
+I:\20170202\eCardProtocol1.1\eCardProtocol\JsonHelper\bin\Debug\AlgorithmHelper.pdb
+I:\20170202\eCardProtocol1.1\eCardProtocol\JsonHelper\bin\Debug\Newtonsoft.Json.xml
+I:\20170202\eCardProtocol1.1\eCardProtocol\JsonHelper\obj\Debug\JsonHelper.csprojResolveAssemblyReference.cache
+I:\20170202\eCardProtocol1.1\eCardProtocol\JsonHelper\obj\Debug\JsonHelper.dll
+I:\20170202\eCardProtocol1.1\eCardProtocol\JsonHelper\obj\Debug\JsonHelper.pdb
