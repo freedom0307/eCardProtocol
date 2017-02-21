@@ -62,6 +62,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="chongzhi.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="chongzhi.Designer.cs">
+      <DependentUpon>chongzhi.cs</DependentUpon>
+    </Compile>
     <Compile Include="Frm_portSet.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -75,13 +81,40 @@
       <DependentUpon>frm_Test.cs</DependentUpon>
     </Compile>
     <Compile Include="Global.cs" />
+    <Compile Include="Koukuan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Koukuan.Designer.cs">
+      <DependentUpon>Koukuan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NewCardFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewCardFrm.Designer.cs">
+      <DependentUpon>NewCardFrm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SetSecret.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SetSecret.Designer.cs">
+      <DependentUpon>SetSecret.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="chongzhi.resx">
+      <DependentUpon>chongzhi.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Frm_portSet.resx">
       <DependentUpon>Frm_portSet.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frm_Test.resx">
       <DependentUpon>frm_Test.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Koukuan.resx">
+      <DependentUpon>Koukuan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewCardFrm.resx">
+      <DependentUpon>NewCardFrm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -93,6 +126,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="SetSecret.resx">
+      <DependentUpon>SetSecret.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

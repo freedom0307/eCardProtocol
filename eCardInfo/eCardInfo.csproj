@@ -35,6 +35,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\eCardInfo.dll</HintPath>
     </Reference>
+    <Reference Include="ICCardHelper">
+      <HintPath>..\ICCardHelper\bin\Debug\ICCardHelper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

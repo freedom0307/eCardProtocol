@@ -60,6 +60,7 @@
             this.btnWriteblock.TabIndex = 12;
             this.btnWriteblock.Text = "写块";
             this.btnWriteblock.UseVisualStyleBackColor = true;
+            this.btnWriteblock.Click += new System.EventHandler(this.btnWriteblock_Click);
             // 
             // btnReadblock
             // 

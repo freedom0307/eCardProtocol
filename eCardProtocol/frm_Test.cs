@@ -18,6 +18,8 @@ namespace eCardProtocol
     public partial class frm_Test : Form
     {
         public static ICCardHelper.CardProtocol card2 = new CardProtocol();
+        string Akey ;
+        string Bkey ;
 
         public frm_Test()
         {
@@ -37,89 +39,97 @@ namespace eCardProtocol
 
         private void btnNew_card_Click(object sender, EventArgs e)
         {
-            if (Global.card.SerialportObject.IsOpen())
-            {
+            NewCardFrm newcardfrm = new NewCardFrm();
+            newcardfrm.Show();
+            //if (Global.card.SerialportObject.IsOpen())
+            //{
 
-                Console.WriteLine("串口已打开,串口号：{0}", Global.card.SerialportObject.serialPort1.PortName);
-                Console.WriteLine("准备开卡");
-                Console.WriteLine("请输入充值金额");
-                double money = Convert.ToDouble (Console.ReadLine().Trim());
-                //Console.WriteLine("请输入读秘钥A");
-                //string Akey = Console.ReadLine().Trim();
-                //Console.WriteLine("请输入写秘钥B");
-                //string Bkey = Console.ReadLine().Trim();
-                // Global .card.CardInitialization (ref  Global .CardinformationObject );
-                string Akey = "FFFFFFFFFFFF";
-                string Bkey = "FFFFFFFFFFFF";
-                Global.CardinformationObject = Global.card.New_card(null, money, null, Akey, Bkey);
-                Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ,欠款次数： {4},卡状态：{5} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count, Global.CardinformationObject.Card_status);
-            }
-            else
-            {
-                MessageBox.Show("请打开串口");
-                Console.WriteLine("串口号{0}：是否打开？ {1}", Global.card.SerialportObject.serialPort1.PortName, Global.card.SerialportObject.serialPort1.IsOpen.ToString());
-            }
+            //    Console.WriteLine("串口已打开,串口号：{0}", Global.card.SerialportObject.serialPort1.PortName);
+            //    Console.WriteLine("准备开卡");
+            //    Console.WriteLine("请输入充值金额");
+            //    double money = Convert.ToDouble (Console.ReadLine().Trim());
+            //    //Console.WriteLine("请输入读秘钥A");
+            //    //string Akey = Console.ReadLine().Trim();
+            //    //Console.WriteLine("请输入写秘钥B");
+            //    //string Bkey = Console.ReadLine().Trim();
+            //    // Global .card.CardInitialization (ref  Global .CardinformationObject );
+            //    string Akey = "FFFFFFFFFFFF";
+            //    string Bkey = "FFFFFFFFFFFF";
+            //    //string Akey = "112233445566";
+            //    //string Bkey = "665544332211";
+            //    Global.CardinformationObject = Global.card.New_card(null, money, null, Akey, Bkey);
+            //    Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ,欠款次数： {4},卡状态：{5} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count, Global.CardinformationObject.Card_status);
+            //}
+            //else
+            //{
+            //    MessageBox.Show("请打开串口");
+            //    Console.WriteLine("串口号{0}：是否打开？ {1}", Global.card.SerialportObject.serialPort1.PortName, Global.card.SerialportObject.serialPort1.IsOpen.ToString());
+            //}
         }
 
         private void btnRecharge_card_Click(object sender, EventArgs e)
         {
-            if (Global.card.SerialportObject.IsOpen())
-            {
-                Console.WriteLine("串口已打开,串口号：{0}", Global.card.SerialportObject.serialPort1.PortName);
-                //Global.card.Recharge_card ("123", 40000,0x02);
-                //Global.card.CardInitialization(ref  Global.CardinformationObject);
-                Console.WriteLine("准备充值");
-                Console.WriteLine("请输入充值金额");
-                string a = Console.ReadLine().Trim();
-                double money = Convert.ToDouble  (a);
-                Global.CardinformationObject = Global.card.Recharge_card(null, money, 0x01);
-                Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3},欠款次数： {4},卡状态： {5} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count, Global.CardinformationObject.Card_status);
-            }
-            else
-            {
-                MessageBox.Show("请打开串口");
-                Console.WriteLine("串口号{0}：是否打开？ {1}", Global.card.SerialportObject.serialPort1.PortName, Global.card.SerialportObject.serialPort1.IsOpen.ToString());
-            }
+            chongzhi chognz = new chongzhi();
+            chognz.Show();
+            //if (Global.card.SerialportObject.IsOpen())
+            //{
+            //    Console.WriteLine("串口已打开,串口号：{0}", Global.card.SerialportObject.serialPort1.PortName);
+            //    //Global.card.Recharge_card ("123", 40000,0x02);
+            //    //Global.card.CardInitialization(ref  Global.CardinformationObject);
+            //    Console.WriteLine("准备充值");
+            //    Console.WriteLine("请输入充值金额");
+            //    string a = Console.ReadLine().Trim();
+            //    double money = Convert.ToDouble  (a);
+            //    Global.CardinformationObject = Global.card.Recharge_card(null, money, 0x01);
+            //    Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3},欠款次数： {4},卡状态： {5} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count, Global.CardinformationObject.Card_status);
+            //}
+            //else
+            //{
+            //    MessageBox.Show("请打开串口");
+            //    Console.WriteLine("串口号{0}：是否打开？ {1}", Global.card.SerialportObject.serialPort1.PortName, Global.card.SerialportObject.serialPort1.IsOpen.ToString());
+            //}
         }
 
         private void btnDeductions_card_Click(object sender, EventArgs e)
         {
-            if (Global.card.SerialportObject.IsOpen())
-            {
-                Console.WriteLine("串口已打开,串口号：{0}", Global.card.SerialportObject.serialPort1.PortName);
-                //Global.card.Deductions_card ("123", 20000, 0x01);
-                Console.WriteLine("准备扣款");
-                Console.WriteLine("请输入扣款金额");
-                double money = Convert.ToDouble (Console.ReadLine().Trim());
-                Console.WriteLine("请输入扣款标志,预扣输入 1 ，扣费输入 2：");
-                string str1 = Console.ReadLine().Trim();
-                byte flag = 0x00;
-                switch (str1)
-                {
-                    case "1":
-                        flag = 0x00;
-                        break;
-                    //case "实扣":
-                    //    flag = 0x01;
-                    //    break;
-                    case "2":
-                        flag = 0xFF;
-                        break;
-                }
-                Console.WriteLine("请输入扣款次数：");
-                string count = Console.ReadLine().Trim();
-                for (int k = 0; k < Convert.ToByte(count); k++)
-                {
-                    Global.CardinformationObject = Global.card.Deductions_card(null, money, flag);
-                    Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3},欠款次数： {4}，卡状态：{5} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count, Global.CardinformationObject.Card_status);
-                }
+            Koukuan koukuan = new Koukuan();
+            koukuan.Show();
+            //if (Global.card.SerialportObject.IsOpen())
+            //{
+            //    Console.WriteLine("串口已打开,串口号：{0}", Global.card.SerialportObject.serialPort1.PortName);
+            //    //Global.card.Deductions_card ("123", 20000, 0x01);
+            //    Console.WriteLine("准备扣款");
+            //    Console.WriteLine("请输入扣款金额");
+            //    double money = Convert.ToDouble (Console.ReadLine().Trim());
+            //    Console.WriteLine("请输入扣款标志,预扣输入 1 ，扣费输入 2：");
+            //    string str1 = Console.ReadLine().Trim();
+            //    byte flag = 0x00;
+            //    switch (str1)
+            //    {
+            //        case "1":
+            //            flag = 0x00;
+            //            break;
+            //        //case "实扣":
+            //        //    flag = 0x01;
+            //        //    break;
+            //        case "2":
+            //            flag = 0xFF;
+            //            break;
+            //    }
+            //    Console.WriteLine("请输入扣款次数：");
+            //    string count = Console.ReadLine().Trim();
+            //    for (int k = 0; k < Convert.ToByte(count); k++)
+            //    {
+            //        Global.CardinformationObject = Global.card.Deductions_card(null, money, flag);
+            //        Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3},欠款次数： {4}，卡状态：{5} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode, Global.CardinformationObject.Debt_count, Global.CardinformationObject.Card_status);
+            //    }
 
-            }
-            else
-            {
-                MessageBox.Show("请打开串口");
-                Console.WriteLine("串口号{0}：是否打开？ {1}", Global.card.SerialportObject.serialPort1.PortName, Global.card.SerialportObject.serialPort1.IsOpen.ToString());
-            }
+            //}
+            //else
+            //{
+            //    MessageBox.Show("请打开串口");
+            //    Console.WriteLine("串口号{0}：是否打开？ {1}", Global.card.SerialportObject.serialPort1.PortName, Global.card.SerialportObject.serialPort1.IsOpen.ToString());
+            //}
         }
 
         private void btnReadblock_Click(object sender, EventArgs e)
@@ -213,24 +223,30 @@ namespace eCardProtocol
 
         private void btnLoadkey_Click(object sender, EventArgs e)
         {
-            if (Global.card.SerialportObject.IsOpen())
-            {
-                Console.WriteLine("串口已打开,串口号：{0}", Global.card.SerialportObject.serialPort1.PortName);
-                Console.WriteLine("请装载秘钥");
-                //Console.WriteLine("请输入读秘钥A");
-                //string Akey = Console.ReadLine().Trim();
-                //Console.WriteLine("请输入写秘钥B");
-                //string Bkey = Console.ReadLine().Trim();
-                string Akey = "112233445566";
-                string Bkey = "112233445566";
-                Global.CardinformationObject = Global.card.Load_Key_card(Akey, Bkey);
-                Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode);
-            }
-            else
-            {
-                MessageBox.Show("请打开串口");
-                Console.WriteLine("串口号{0}：是否打开？ {1}", Global.card.SerialportObject.serialPort1.PortName, Global.card.SerialportObject.serialPort1.IsOpen.ToString());
-            }
+            SetSecret frmse = new SetSecret();
+            frmse.Show();
+            //if (Global.card.SerialportObject.IsOpen())
+            //{
+            //    Console.WriteLine("串口已打开,串口号：{0}", Global.card.SerialportObject.serialPort1.PortName);
+            //    Console.WriteLine("请装载秘钥");
+            //    //Console.WriteLine("请输入读秘钥A");
+            //    //string Akey = Console.ReadLine().Trim();
+            //    //Console.WriteLine("请输入写秘钥B");
+            //    //string Bkey = Console.ReadLine().Trim();
+            //    // Akey = "FFFFFFFFFFFF";
+            //    // Bkey = "FFFFFFFFFFFF";
+            //    // Akey = "112233445566";
+            //    // Bkey = "665544332211";
+            //     //Akey = "112233445566";
+            //     //Bkey = "775544332288";
+            //    Global.CardinformationObject = Global.card.Load_Key_card(Akey, Bkey);
+            //    Console.WriteLine("卡号：{0} ，返回信息： {1} ， 金额：{2} ， 操作码：{3} ", Global.CardinformationObject.Card_ID, Global.CardinformationObject.Message, Global.CardinformationObject.Money, Global.CardinformationObject.Opcode);
+            //}
+            //else
+            //{
+            //    MessageBox.Show("请打开串口");
+            //    Console.WriteLine("串口号{0}：是否打开？ {1}", Global.card.SerialportObject.serialPort1.PortName, Global.card.SerialportObject.serialPort1.IsOpen.ToString());
+            //}
         }
 
         private void btnQuery_card_Click(object sender, EventArgs e)
@@ -249,6 +265,11 @@ namespace eCardProtocol
                 MessageBox.Show("请打开串口");
                 Console.WriteLine("串口号{0}：是否打开？ {1}", Global.card.SerialportObject.serialPort1.PortName, Global.card.SerialportObject.serialPort1.IsOpen.ToString());
             }
+        }
+
+        private void btnWriteblock_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

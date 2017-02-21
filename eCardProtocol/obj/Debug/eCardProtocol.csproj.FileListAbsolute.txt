@@ -111,3 +111,7 @@ I:\20170202\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol
 I:\20170202\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\Debug\ICCardHelper.dll
 I:\20170202\eCardProtocol1.1\eCardProtocol\eCardProtocol\bin\Debug\ICCardHelper.pdb
 I:\20170202\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.csprojResolveAssemblyReference.cache
+I:\20170202\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.SetSecret.resources
+I:\20170202\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.Koukuan.resources
+I:\20170202\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.NewCardFrm.resources
+I:\20170202\eCardProtocol1.1\eCardProtocol\eCardProtocol\obj\Debug\eCardProtocol.chongzhi.resources
